@@ -1,6 +1,3 @@
-var path = require('path');
-var bodyParser = require('body-parser')
-
 var http = require('http');
 var server = http.createServer();
 
@@ -8,11 +5,14 @@ var express = require('express');
 var app = express();
 var router = require('./routes');
 
-var socketio = require('socket.io');
-
 server.on('request', app);
 
-var io = socketio(server);
+/* INITIALIZE SOCKETS */
+require('./sockets.js')(server);
+
+var path = require('path');
+var bodyParser = require('body-parser');
+
 
 /* LOAD THE BOT */
 var Bot = require('./bot');
@@ -24,112 +24,15 @@ server.listen(1337, function() {
   console.log('The server is listening on port 1337!');
 });
 
-
-// Body parser
+/* MIDDLEWARE */
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/bot', router);
 
-// Routes
+/* ROUTES */
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Sockets start here
-
-var unmatched = [];
-
-function coinFlip() {
-  return Math.floor(Math.random() * 2 + 1);
-}
-
-function findPartner(mySocket) {
-
-  // 50% chance of getting matched with a bot
-  if (coinFlip() % 2) {
-    return { id: 'bot' };
-
-    // there are unmatched people
-  } else if (unmatched.length > 0) {
-
-    // make sure you don't get paired with yourself
-    if (unmatched[0].id === mySocket.id) {
-      return unmatched.splice(1, 1);
-    } else {
-      var partner = unmatched.shift();
-      partner.partner = mySocket;
-      return partner;
-    }
-
-    // there are no unmatched people, get added to the queue and wait
-  } else if (unmatched.length < 1) {
-    unmatched.push(mySocket);
-    console.log('waiting for a partner');
-  }
-}
-
-
-io.on('connection', function(socket) {
-  console.log('-----------------');
-  console.log(socket.id, 'connected');
-  console.log('unmatched users after joining', unmatched.map(person => person.id))
-
-  socket.partner = findPartner(socket)
-  var partner = socket.partner || 'n/a'
-  console.log('found a partner for', socket.id, ':', partner.id);
-  console.log('unmatched users after match', unmatched.map(person => person.id));
-
-  if (socket.partner) {
-    io.to(socket.partner.id).emit('match status', 'you have been matched... start talking!')
-    io.to(socket.id).emit('match status', 'you have been matched... start talking!')
-  } else {
-    io.to(socket.id).emit('match status', 'waiting for partner')
-  }
-
-  socket.on('chat message', function(msg) {
-
-    // if your partner is a bot...
-    if (socket.partner.id === 'bot') {
-      console.log('chatting with bot', socket.id)
-        // io.to() emits the response to the socket that sent the message only
-      io.to(socket.id).emit('reply', bot.reply(socket.id, msg));
-
-      // if your partner is human...
-    } else {
-      io.to(socket.partner.id).emit('reply', msg);
-    }
-
-  })
-
-  socket.on('disconnect', function() {
-    var index;
-    console.log('-----------------------');
-    console.log(socket.id, 'disconnected from the server');
-    // console.log('unmatched before splice', unmatched);
-    unmatched.forEach(function(person, i) {
-      // console.log('checking', i);
-      if (person.id === socket.id) {
-        // console.log('theres a match!', index, i);
-        index = i
-      }
-    })
-    if (index) unmatched.splice(index, 1)
-    // console.log('unmatched after splice', unmatched)
-
-    // emit message to your partner that you have left
-    if (socket.partner && socket.partner.id !== 'bot') {
-      io.to(socket.partner.id).emit('partner left', 'your partner left')
-
-      // remove partner objects from both sockets and push the old partner to unmatched array
-      var olderPartner = socket.partner;
-      olderPartner.partner = null;
-      unmatched.push(olderPartner);
-      socket.partner = null;
-    }
-
-
-  });
-
-});

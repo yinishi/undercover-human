@@ -7,11 +7,16 @@
 </head>
 
 <body ng-controller='ChatCtrl'>
+
   <div id="container">
+
+    <!-- CHAT TEXT AREA -->
     <div id="first">
       <ul id="messages" ng-repeat="message in messages track by $index">
         <li>{{message}}</li>
       </ul>
+
+      <!-- CHAT BAR -->
       <form class="chatbox">
         <input id="m" ng-model="input" name="input" autocomplete="off" />
         <button ng-click="postMessage()">Send</button>
@@ -20,11 +25,15 @@
 
     <div id="second">
 
+      <!-- SCORE BOARD -->
       <div id="scoreboard">
-      <h2>Let's chat!</h2>
-        Humans: 0
+        <h2>Scoreboard</h2>
+        <br>Humans: 0
         <br>Robots: 0
+
       </div>
+
+      <!-- CHOICE BUTTONS -->
       <div class="choice">
         <form>
           <input type="radio" name="choice" value="human"> Human
@@ -39,8 +48,9 @@
   <script src="/lib/angular.js"></script>
   <script src="/lib/angular-ui-router.js"></script>
   <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
   <script src="/app.js"></script>
+  <script src="/js/ChatCtrl.js"></script>
+  <script src="/js/ChatFactory.js"></script>
 </body>
 
 </html>

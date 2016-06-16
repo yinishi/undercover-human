@@ -8,7 +8,7 @@
     font: 13 px Helvetica, Arial;
   }
 
-  /* GENERAL LAYOUT OF THE SITE */
+  /* CONTAINERS */
   
   #container {
     width: 100%;
@@ -27,18 +27,6 @@
     height: 90vh;
     border: 10px;
     float: left;
-  }
-  
-  #scoreboard {
-    width: 100%;
-    height: 30vh;
-    background-color: pink;
-  }
-  
-  .choice {
-    width: 100%;
-    height: 70vh;
-    background-color: #EED2EE;
   }
   
   /* CHAT BOX INPUT AREA */
@@ -67,6 +55,8 @@
     padding: 1vw;
   }
   
+  /* MESSAGE AREA */
+
   #messages {
     list-style-type: none;
     margin: 0;
@@ -84,4 +74,20 @@
   .automated-msg {
     color: #cccccc;
     font-style: italic;
+  }
+  
+  /* SCORE BOARD STYLING */
+
+  #scoreboard {
+    width: 100%;
+    height: 30vh;
+    background-color: pink;
+  }
+
+  /* CHOICE BOX STYLING */
+  
+  .choice {
+    width: 100%;
+    height: 70vh;
+    background-color: #EED2EE;
   }
