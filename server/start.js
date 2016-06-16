@@ -104,9 +104,19 @@ io.on('connection', function(socket) {
   })
 
   socket.on('disconnect', function() {
-    unmatched.splice(unmatched.indexOf(socket.id), 1)
+    var index;
     console.log('-----------------------');
     console.log(socket.id, 'disconnected from the server');
+    // console.log('unmatched before splice', unmatched);
+    unmatched.forEach(function(person, i) {
+      // console.log('checking', i);
+      if (person.id === socket.id) {
+        // console.log('theres a match!', index, i);
+        index = i
+      }
+    })
+    if (index) unmatched.splice(index, 1)
+    // console.log('unmatched after splice', unmatched)
 
     // emit message to your partner that you have left
     if (socket.partner && socket.partner.id !== 'bot') {

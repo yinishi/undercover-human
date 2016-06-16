@@ -1,18 +1,20 @@
 <!doctype html>
-<html>
+<html ng-app="bot">
 
 <head>
   <title>Chatty</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 
-<body>
+<body ng-controller='ChatCtrl'>
   <div id="container">
     <div id="first">
-      <ul id="messages"></ul>
+      <ul id="messages" ng-repeat="message in messages track by $index">
+        <li>{{message}}</li>
+      </ul>
       <form class="chatbox">
-        <input id="m" autocomplete="off" />
-        <button>Send</button>
+        <input id="m" ng-model="input" name="input" autocomplete="off" />
+        <button ng-click="postMessage()">Send</button>
       </form>
     </div>
 
@@ -27,14 +29,15 @@
         <form>
           <input type="radio" name="choice" value="human"> Human
           <br>
-          <input type="radio" name="choice" value="robot">Robot
+          <input type="radio" name="choice" value="robot"> Robot
           <br>
           <button>Submit and connect with a new partner</button>
       </div>
     </div>
 
   </div>
-
+  <script src="/lib/angular.js"></script>
+  <script src="/lib/angular-ui-router.js"></script>
   <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
   <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
   <script src="/app.js"></script>
