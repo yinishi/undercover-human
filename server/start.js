@@ -30,16 +30,17 @@ server.listen(1337, function () {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Routes
-app.use(express.static(path.join(__dirname, 'browser')));
+app.use(express.static(path.join(__dirname, '../public')));
 app.use('/bot', router)
+
+// Routes
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/:room', function (req, res) {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+// app.get('/:room', function (req, res) {
+//     res.sendFile(path.join(__dirname, 'index.html'));
+// });
 
 
 // Sockets start here
@@ -48,8 +49,10 @@ io.on('connection', function(socket) {
   console.log(socket.id, 'connected');
 
   socket.on('chat message', function(msg) {
-    console.log('message:', msg)
-    io.emit('chat message', bot.reply("local-user", msg));
+    setTimeout(function() {
+      io.emit('chat message', bot.reply("local-user", msg));
+    }, Math.random() * 6000)
+    
   })
 
   socket.on('disconnect', function() {
