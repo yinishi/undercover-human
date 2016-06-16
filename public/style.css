@@ -7,43 +7,80 @@
   body {
     font: 13 px Helvetica, Arial;
   }
+
+  /* GENERAL LAYOUT OF THE SITE */
   
-  form {
+  #container {
+    width: 100%;
+    height: 90vh;
+  }
+  
+  #first {
+    width: 50%;
+    height: 90vh;
+    overflow: auto;
+    float: left;
+  }
+  
+  #second {
+    width: 50%;
+    height: 90vh;
+    border: 10px;
+    float: left;
+  }
+  
+  #scoreboard {
+    width: 100%;
+    height: 30vh;
+    background-color: pink;
+  }
+  
+  .choice {
+    width: 100%;
+    height: 70vh;
+    background-color: #EED2EE;
+  }
+  
+  /* CHAT BOX INPUT AREA */
+  
+  .chatbox {
     background: #000;
     padding: 3px;
     position: fixed;
     bottom: 0;
+    height: 8vh;
     width: 100%;
   }
   
-  form input {
+  .chatbox input {
     border: 0;
     padding: 10px;
-    width: 90%;
+    width: 80vw;
     margin-right: .5%;
   }
   
-  form button {
-    width: 9%;
+  button {
+    /*width: 5vw;*/
     background: rgb(130, 224, 255);
     border: none;
-    padding: 10px;
+    justify-content: center;
+    padding: 1vw;
   }
   
-  # messages {
-    list - style - type: none;
+  #messages {
+    list-style-type: none;
     margin: 0;
     padding: 0;
   }
   
-  # messages li {
+  #messages li {
     padding: 5 px 10 px;
   }
   
-  # messages li: nth - child(odd) {
+  #messages li:nth-child(odd) {
     background: #eee;
   }
-
+  
   .automated-msg {
     color: #cccccc;
     font-style: italic;
