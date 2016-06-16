@@ -49,7 +49,7 @@ function findPartner(mySocket) {
 
   // 50% chance of getting matched with a bot
   if (coinFlip() % 2) {
-    return {id: 'bot'};
+    return { id: 'bot' };
 
     // there are unmatched people
   } else if (unmatched.length > 0) {
@@ -81,15 +81,22 @@ io.on('connection', function(socket) {
   console.log('found a partner for', socket.id, ':', partner.id);
   console.log('unmatched users after match', unmatched.map(person => person.id));
 
+  if (socket.partner) {
+    io.to(socket.partner.id).emit('match status', 'you have been matched... start talking!')
+    io.to(socket.id).emit('match status', 'you have been matched... start talking!')
+  } else {
+    io.to(socket.id).emit('match status', 'waiting for partner')
+  }
+
   socket.on('chat message', function(msg) {
 
     // if your partner is a bot...
     if (socket.partner.id === 'bot') {
       console.log('chatting with bot', socket.id)
-      // io.to() emits the response to the socket that sent the message only
+        // io.to() emits the response to the socket that sent the message only
       io.to(socket.id).emit('reply', bot.reply(socket.id, msg));
 
-    // if your partner is human...
+      // if your partner is human...
     } else {
       io.to(socket.partner.id).emit('reply', msg);
     }
@@ -99,8 +106,20 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function() {
     unmatched.splice(unmatched.indexOf(socket.id), 1)
     console.log('-----------------------');
-    console.log('after ', socket.id, 'left:', unmatched)
     console.log(socket.id, 'disconnected from the server');
+
+    // emit message to your partner that you have left
+    if (socket.partner && socket.partner.id !== 'bot') {
+      io.to(socket.partner.id).emit('partner left', 'your partner left')
+
+      // remove partner objects from both sockets and push the old partner to unmatched array
+      var olderPartner = socket.partner;
+      olderPartner.partner = null;
+      unmatched.push(olderPartner);
+      socket.partner = null;
+    }
+
+
   });
 
 });

@@ -43,3 +43,8 @@
   # messages li: nth - child(odd) {
     background: #eee;
   }
+
+  .automated-msg {
+    color: #cccccc;
+    font-style: italic;
+  }
