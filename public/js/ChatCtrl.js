@@ -26,15 +26,13 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     if (correct) ScoreFactory.humans++;
     else ScoreFactory.bots++;
 
-    ChatFactory.clearAllMessages()
+    ChatFactory.clearAllMessages();
     socket.emit('next');
-    socket = io();
   };
 
   // posts whether the person is connected or waiting
   socket.on('match status', function(response) {
     $scope.partner = response.partner;
-    console.log('partner is', $scope.partner)
     $scope.$apply(function() {
       ChatFactory.postMessage(response.msg);
     });

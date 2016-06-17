@@ -10,8 +10,8 @@
 
 <body ng-controller='ChatCtrl'>
   <div id="container">
+  
     <!-- CHAT TEXT AREA -->
-    {{partner}}
     <div id="first">
       <ul id="messages" ng-repeat="message in messages track by $index">
         <li>{{message}}</li>
