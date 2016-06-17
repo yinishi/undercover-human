@@ -4,7 +4,9 @@
 <head>
   <title>Chatty</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
-  <link href="https://fonts.googleapis.com/css?family=Average" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Quando" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Cutive+Mono" rel="stylesheet">
 
 </head>
 
@@ -22,7 +24,8 @@
 
       <!-- SCORE BOARD -->
       <div id="third">
-        <h2>How to Play</h2>
+        <h1>CATCHY NAME HERE</h1>
+        <p>yeah man</p>
       </div>
 
       <!-- CHOICE BUTTONS -->
@@ -30,17 +33,22 @@
       <div id="fourth">
 
         <scoreboard></scoreboard>
-
+        <br>
+        partner is: {{partner}}
         <hr>
 
-        <form name="choiceForm" ng-submit="next(choiceForm)">
-          <input type="radio" name="choice" value="human" ng-model="choiceForm.choice" ng-required="!choice"> Human
-          <br>
-          <input type="radio" name="choice" value="bot" ng-model="choiceForm.choice" ng-required="!choice"> Robot
-          <br>
-          <br>
-          <button>Submit and connect with a new partner</button>
-        </form>
+        My partner was a...
+        <br><br>
+        <div>
+          <form name="choiceForm" ng-submit="next(choiceForm)">
+            <input type="radio" name="choice" value="human" ng-model="choiceForm.choice" ng-required="!choice"> Human
+            <br>
+            <input type="radio" name="choice" value="bot" ng-model="choiceForm.choice" ng-required="!choice"> Robot
+            <br>
+            <br>
+            <button>Submit and connect with a new partner</button>
+          </form>
+        </div>
       </div>
 
     </div>
@@ -50,6 +58,7 @@
       <!-- <div id="test"> -->
       <form class="chatbox" novalidate>
         <input id="m" ng-model="input" name="input" autocomplete="off" required>
+        <!-- {{partner}} -->
         <button ng-click="postMessage()" ng-disabled="!partner">Send</button>
       </form>
       <!-- </div> -->

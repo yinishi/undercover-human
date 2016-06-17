@@ -5,7 +5,8 @@
   }
   
   body {
-    font-family: 'Average', serif;
+    font-family: 'Open Sans', sans-serif;
+    /*font-weight: 300;*/
     font-size: 16px;
     font-weight: 300;
     overflow: hidden;
@@ -18,17 +19,19 @@
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
   }
 
-  h2 {
+  h1 {
+    font-family: 'Cutive Mono', serif;
     color: #5D4157;
   }
 
   button {
-    height: 40px;
     padding: 10px;
     justify-content: center;
     border: 1px solid #424242;
     background-color: white;
     word-wrap: break-word;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
   }
 
   /* CONTAINERS */
@@ -101,11 +104,13 @@
     border-width: 1px 0px 1px 1px;
     border-style: solid;
     border-color: #424242;
+    font-family: 'Open Sans', sans-serif;
     outline: none;
   }
   
   .chatbox button {
     width: 50px;
+    height: 40px;
     float: right;
     background: white;
     border-width: 1px 0 1px 1px;
@@ -127,6 +132,7 @@
     padding: 10px;
     margin: 5px;
     color: #5D4157;
+    font-family: 'Cutive Mono', serif;
     background-color: #ededed;
   }
   /*  #messages li:nth-child(odd) {

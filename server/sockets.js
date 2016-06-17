@@ -42,22 +42,26 @@ module.exports = function(server) {
     console.log(socket.id, 'connected');
     console.log('unmatched users after joining', unmatched.map(person => person.id));
 
-    // upon connection, either get matched with a partner or get added to the unmatched queue
-    socket.partner = findPartner(socket);
-    var partner = socket.partner || 'n/a';
-    console.log('found a partner for', socket.id, ':', partner.id);
-    console.log('unmatched users after match', unmatched.map(person => person.id));
+    io.to(socket.id).emit('match status', { msg: 'waiting for partner...' });
 
-    // matched: send connected message
-    if (socket.partner) {
-      var data = { msg: 'you have been matched... start talking!', socket: socket.id, partner: socket.partner.id }
-      io.to(socket.partner.id).emit('match status', data);
-      io.to(socket.id).emit('match status', data);
+    // not matched: emit waiting message
+    setTimeout(sendMatch, Math.random() * 6000)
+      // matched: send connected message
 
-      // not matched: emit waiting message
-    } else {
-      io.to(socket.id).emit('match status', { msg: 'waiting for partner...' });
+    function sendMatch() {
+      // upon connection, either get matched with a partner or get added to the unmatched queue
+      socket.partner = findPartner(socket);
+      var partner = socket.partner || 'n/a';
+      console.log('found a partner for', socket.id, ':', partner.id);
+      console.log('unmatched users after match', unmatched.map(person => person.id));
+      if (socket.partner) {
+        var data = { msg: 'you have been matched... start talking!', socket: socket.id, partner: socket.partner.id }
+        io.to(socket.partner.id).emit('match status', data);
+        io.to(socket.id).emit('match status', data);
+
+      } 
     }
+
 
     // upon receiving the first message...
     socket.on('chat message', function(msg) {
@@ -65,7 +69,11 @@ module.exports = function(server) {
       if (socket.partner.id === 'bot') {
         console.log(socket.id, 'is chatting with bot');
         // io.to() emits the response to the socket that sent the message only
-        io.to(socket.id).emit('reply', bot.reply(socket.id, msg));
+
+        setTimeout(function() {
+          io.to(socket.id).emit('reply', bot.reply(socket.id, msg));
+        }, Math.random() * 4000);
+
 
         // if your partner is human...
       } else {
@@ -89,7 +97,7 @@ module.exports = function(server) {
         io.to(socket.id).emit('match status', { msg: 'waiting for partner...' });
 
         // tell your old partner that you left
-        var data = { msg: 'your partner left :( please judge them before moving on >', socket: socket.id, partner: '' };
+        var data = { msg: 'your partner left :( please judge them before moving on >', socket: socket.id, partner: null };
         io.to(oldPartner.id).emit('match status', data);
 
         // reset partners
@@ -110,7 +118,7 @@ module.exports = function(server) {
 
         // not matched: emit waiting message
       } else {
-        io.to(socket.id).emit('match status', { msg: 'waiting for a new partner...' });
+        io.to(socket.id).emit('match status', { msg: 'waiting for a new partner...', partner: null });
       }
       console.log('unmatched is now', unmatched.map(person => person.id));
     });
