@@ -10,6 +10,27 @@
     font-weight: 300;
     overflow: hidden;
   }
+  
+  hr {
+    border: 0;
+    height: 1px;
+    margin: 15px 0;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+  }
+
+  h2 {
+    color: #5D4157;
+  }
+
+  button {
+    height: 40px;
+    padding: 10px;
+    justify-content: center;
+    border: 1px solid #424242;
+    background-color: white;
+    word-wrap: break-word;
+  }
+
   /* CONTAINERS */
   
   #container {
@@ -20,10 +41,11 @@
   #first {
     padding: 10px;
     margin: 0px auto;
-    width: 50%;
-    height: 90vh;
+    width: 50vw;
+    height: calc(100vh - 40px);
     overflow: auto;
     float: left;
+    background-color: #A8CABA;
   }
   
   #second {
@@ -33,42 +55,66 @@
     border: 10px;
     float: left;
   }
+
+  #third {
+    margin: 0px auto;
+    padding: 20px;
+    width: 100%;
+    height: 30vh;
+    background-color: #CAD7B2;
+    border-width: 0 0 1px 1px;
+    border-style: solid;
+    border-color: #424242;
+    overflow: auto;
+  }
+
+  #fourth {
+    margin: 0px auto;
+    padding: 20px;
+    width: 100%;
+    height: 70vh;
+    background-color: #EBE3AA;
+    border-width: 0 0 0 1px;
+    border-style: solid;
+    border-color: #424242;
+    overflow: auto;
+  }
+
   /* CHAT BOX INPUT AREA */
   
   .chatbox {
     /*background: #000;*/
-    padding: 5px;
+    /*padding: 5px;*/
+    /*margin-bottom: 5px;*/
     position: fixed;
     bottom: 0;
-    height: 8vh;
-    width: 100%;
+    height: 40px;
+    width: 50vw;
   }
-  
+
   .chatbox input {
     padding: 10px;
-    width: 80vw;
-    margin-right: .5%;
-    border: 1px solid #6495ED;
+    height: 40px;
+    width: calc(50vw - 50px);
+    display: inline-block;
+    margin-bottom: 0px;
+    border-width: 1px 0px 1px 1px;
+    border-style: solid;
+    border-color: #424242;
     outline: none;
   }
   
-  button {
-    /*width: 5vw;*/
-    padding: 1vw;
-    background: rgb(130, 224, 255);
-    border: none;
-    justify-content: center;
-    /*outline: none;*/
+  .chatbox button {
+    width: 50px;
+    float: right;
+    background: white;
+    border-width: 1px 0 1px 1px;
+    border-style: solid;
   }
-  button :disabled {
-    width: 5vw;
-    padding: 1vw;
-    background: pink;
-    border: none;
-    justify-content: center;
-    /*outline: none;*/
+  
+  .chatbox button:disabled {
+    background: #ededed;
   }
-
   /* MESSAGE AREA */
   
   #messages {
@@ -78,36 +124,23 @@
   }
   
   #messages li {
-    padding: 5 px 10 px;
+    padding: 10px;
+    margin: 5px;
+    color: #5D4157;
+    background-color: #ededed;
   }
-  
-  #messages li:nth-child(odd) {
+  /*  #messages li:nth-child(odd) {
     background: #eee;
   }
+  */
   
   .automated-msg {
     color: #cccccc;
     font-style: italic;
   }
-
   /* SCORE BOARD STYLING */
   
-  #scoreboard {
-    margin: 0px auto;
-    padding: 10px;
-    width: 100%;
-    height: 30vh;
-    background-color: pink;
-    overflow: auto;
-  }
-
+  
   /* CHOICE BOX STYLING */
   
-  .choice {
-    margin: 0px auto;
-    padding: 20px;
-    width: 100%;
-    height: 60vh;
-    background-color: #EED2EE;
-    overflow: auto;
-  }
+  

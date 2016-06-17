@@ -16,24 +16,23 @@
       <ul id="messages" ng-repeat="message in messages track by $index">
         <li>{{message}}</li>
       </ul>
-
-      <!-- CHAT BAR -->
-      <form class="chatbox" novalidate>
-        <input id="m" ng-model="input" name="input" autocomplete="off" required>
-        <button ng-click="postMessage()" ng-disabled="!partner">Send</button>
-      </form>
     </div>
 
     <div id="second">
 
       <!-- SCORE BOARD -->
-      <div id="scoreboard">
-        <scoreboard></scoreboard>
+      <div id="third">
+        <h2>How to Play</h2>
       </div>
 
       <!-- CHOICE BUTTONS -->
 
-      <div class="choice">
+      <div id="fourth">
+
+        <scoreboard></scoreboard>
+
+        <hr>
+
         <form name="choiceForm" ng-submit="next(choiceForm)">
           <input type="radio" name="choice" value="human" ng-model="choiceForm.choice" ng-required="!choice"> Human
           <br>
@@ -41,11 +40,20 @@
           <br>
           <br>
           <button>Submit and connect with a new partner</button>
-          </form>
+        </form>
       </div>
 
     </div>
 
+    <div class='chatbox'>
+      <!-- CHAT BAR -->
+      <!-- <div id="test"> -->
+      <form class="chatbox" novalidate>
+        <input id="m" ng-model="input" name="input" autocomplete="off" required>
+        <button ng-click="postMessage()" ng-disabled="!partner">Send</button>
+      </form>
+      <!-- </div> -->
+    </div>
   </div>
 
   <!-- SCRIPTS -->
@@ -57,6 +65,10 @@
   <script src="/js/ScoreDirective.js"></script>
   <script src="/js/ChatFactory.js"></script>
   <script src="/js/ScoreFactory.js"></script>
+
+  <script type="text/javascript">
+  // need to add the auto scrolling
+  </script>
 </body>
 
 </html>

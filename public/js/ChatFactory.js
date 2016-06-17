@@ -11,9 +11,6 @@ app.factory('ChatFactory', function() {
     },
     clearAllMessages: function() {
       messageCache.splice(0, messageCache.length);
-    },
-    next: function() {
-
     }
   };
 });
