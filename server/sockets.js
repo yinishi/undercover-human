@@ -47,7 +47,7 @@ module.exports = function(server) {
 
     // not matched: emit waiting message
     setTimeout(sendMatch, timeout);
-      // matched: send connected message
+    // matched: send connected message
 
     function sendMatch() {
       // upon connection, either get matched with a partner or get added to the unmatched queue
@@ -60,7 +60,7 @@ module.exports = function(server) {
         io.to(socket.partner.id).emit('match status', data);
         io.to(socket.id).emit('match status', data);
 
-      } 
+      }
     }
 
 
@@ -92,14 +92,14 @@ module.exports = function(server) {
     ///////////////////
 
     socket.on('next', function() {
+      // emit waiting message
+      io.to(socket.id).emit('match status', { msg: 'waiting for a new partner...' });
 
       if (socket.partner && socket.partner !== 'disconnected') {
         console.log('--------------------');
         console.log(socket.id, 'disconnected from their partner,', socket.partner.id);
         var oldPartner = socket.partner;
 
-        // emit waiting message
-        io.to(socket.id).emit('match status', { msg: 'waiting for a new partner...' });
 
         // tell your old partner that you left
         var data = { msg: 'your partner left. please assess them before moving on.', socket: oldPartner.id, partner: 'disconnected' };
@@ -120,7 +120,7 @@ module.exports = function(server) {
         io.to(socket.id).emit('match status', data);
 
         // not matched: emit waiting message
-      } 
+      }
       console.log('unmatched is now', unmatched.map(person => person.id));
     });
 
@@ -148,7 +148,7 @@ module.exports = function(server) {
 
       // emit message to their partner that the person has left
       if (oldPartner && oldPartner.id !== 'bot') {
-        io.to(oldPartner.id).emit('partner left', {msg: 'your partner left', partner: 'disconnected'});
+        io.to(oldPartner.id).emit('partner left', { msg: 'your partner left', partner: 'disconnected' });
 
         // remove partner objects from both sockets and push the old partner to unmatched array
         oldPartner.partner = null;
