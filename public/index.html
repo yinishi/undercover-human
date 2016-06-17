@@ -4,22 +4,23 @@
 <head>
   <title>Chatty</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Average" rel="stylesheet">
+
 </head>
 
 <body ng-controller='ChatCtrl'>
-
   <div id="container">
-
     <!-- CHAT TEXT AREA -->
+    {{partner}}
     <div id="first">
       <ul id="messages" ng-repeat="message in messages track by $index">
         <li>{{message}}</li>
       </ul>
 
       <!-- CHAT BAR -->
-      <form class="chatbox">
-        <input id="m" ng-model="input" name="input" autocomplete="off" />
-        <button ng-click="postMessage()">Send</button>
+      <form class="chatbox" novalidate>
+        <input id="m" ng-model="input" name="input" autocomplete="off" required>
+        <button ng-click="postMessage()" ng-disable="!partner">Send</button>
       </form>
     </div>
 
@@ -27,30 +28,32 @@
 
       <!-- SCORE BOARD -->
       <div id="scoreboard">
-        <h2>Scoreboard</h2>
-        <br>Humans: 0
-        <br>Robots: 0
-
+        <scoreboard></scoreboard>
       </div>
 
       <!-- CHOICE BUTTONS -->
       <div class="choice">
-        <form>
-          <input type="radio" name="choice" value="human"> Human
+        <form name="choiceForm" ng-submit="next(choiceForm)">
+          <input type="radio" name="choice" value="human" ng-model="choiceForm.choice"> Human
           <br>
-          <input type="radio" name="choice" value="robot"> Robot
+          <input type="radio" name="choice" value="bot" ng-model="choiceForm.choice"> Robot
+          <br>
           <br>
           <button>Submit and connect with a new partner</button>
       </div>
     </div>
 
   </div>
+
+  <!-- SCRIPTS -->
   <script src="/lib/angular.js"></script>
   <script src="/lib/angular-ui-router.js"></script>
   <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
   <script src="/app.js"></script>
   <script src="/js/ChatCtrl.js"></script>
+  <script src="/js/ScoreDirective.js"></script>
   <script src="/js/ChatFactory.js"></script>
+  <script src="/js/ScoreFactory.js"></script>
 </body>
 
 </html>

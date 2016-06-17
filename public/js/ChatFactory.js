@@ -10,7 +10,10 @@ app.factory('ChatFactory', function() {
       messageCache.push(message);
     },
     clearAllMessages: function() {
-      messageCache = [];
+      messageCache.splice(0, messageCache.length);
+    },
+    next: function() {
+
     }
   };
 });
