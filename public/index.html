@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css?family=Quando" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Cutive+Mono" rel="stylesheet">
-
 </head>
 
 <body ng-controller='ChatCtrl'>
@@ -22,7 +21,7 @@
 
     <div id="second">
 
-      <!-- SCORE BOARD -->
+      <!-- TITLE BLOCK -->
       <div id="third">
         <h1>CATCHY NAME HERE</h1>
         <p>yeah man</p>
@@ -33,11 +32,9 @@
       <div id="fourth">
 
         <scoreboard></scoreboard>
-        <br>
-        partner is: {{partner}}
         <hr>
 
-        My partner was a...
+        My partner is a...
         <br><br>
         <div>
           <form name="choiceForm" ng-submit="next(choiceForm)">
@@ -46,7 +43,7 @@
             <input type="radio" name="choice" value="bot" ng-model="choiceForm.choice" ng-required="!choice"> Robot
             <br>
             <br>
-            <button>Submit and connect with a new partner</button>
+            <button ng-disabled="!partner">Submit and connect with a new partner</button>
           </form>
         </div>
       </div>
@@ -59,7 +56,7 @@
       <form class="chatbox" novalidate>
         <input id="m" ng-model="input" name="input" autocomplete="off" required>
         <!-- {{partner}} -->
-        <button ng-click="postMessage()" ng-disabled="!partner">Send</button>
+        <button ng-click="postMessage()" ng-disabled="partner === 'disconnected' || !partner">Send</button>
       </form>
       <!-- </div> -->
     </div>

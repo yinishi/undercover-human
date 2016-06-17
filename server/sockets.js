@@ -2,6 +2,7 @@ var socketio = require('socket.io');
 var bot = require('./bot').bot;
 
 var unmatched = [];
+var timeout = Math.random() * 6000;
 
 function coinFlip() {
   return Math.floor(Math.random() * 2 + 1);
@@ -45,7 +46,7 @@ module.exports = function(server) {
     io.to(socket.id).emit('match status', { msg: 'waiting for partner...' });
 
     // not matched: emit waiting message
-    setTimeout(sendMatch, Math.random() * 6000)
+    setTimeout(sendMatch, timeout);
       // matched: send connected message
 
     function sendMatch() {
@@ -55,13 +56,17 @@ module.exports = function(server) {
       console.log('found a partner for', socket.id, ':', partner.id);
       console.log('unmatched users after match', unmatched.map(person => person.id));
       if (socket.partner) {
-        var data = { msg: 'you have been matched... start talking!', socket: socket.id, partner: socket.partner.id }
+        var data = { msg: 'you have been matched... start chatting!', socket: socket.id, partner: socket.partner.id }
         io.to(socket.partner.id).emit('match status', data);
         io.to(socket.id).emit('match status', data);
 
       } 
     }
 
+
+    ////////////////////
+    /// CHAT MESSAGE ///
+    ////////////////////
 
     // upon receiving the first message...
     socket.on('chat message', function(msg) {
@@ -72,7 +77,7 @@ module.exports = function(server) {
 
         setTimeout(function() {
           io.to(socket.id).emit('reply', bot.reply(socket.id, msg));
-        }, Math.random() * 4000);
+        }, timeout);
 
 
         // if your partner is human...
@@ -83,28 +88,26 @@ module.exports = function(server) {
 
 
     ///////////////////
-    /// NEXT BUTTON ///
+    ///    NEXT     ///
     ///////////////////
 
     socket.on('next', function() {
 
-      if (socket.partner) {
+      if (socket.partner && socket.partner !== 'disconnected') {
         console.log('--------------------');
         console.log(socket.id, 'disconnected from their partner,', socket.partner.id);
         var oldPartner = socket.partner;
 
         // emit waiting message
-        io.to(socket.id).emit('match status', { msg: 'waiting for partner...' });
+        io.to(socket.id).emit('match status', { msg: 'waiting for a new partner...' });
 
         // tell your old partner that you left
-        var data = { msg: 'your partner left :( please judge them before moving on >', socket: socket.id, partner: null };
+        var data = { msg: 'your partner left. please assess them before moving on.', socket: oldPartner.id, partner: 'disconnected' };
         io.to(oldPartner.id).emit('match status', data);
 
         // reset partners
         socket.partner = null;
         oldPartner.partner = null;
-        console.log('partner should now be null', socket.partner);
-        console.log('checking to make sure old partner still exists as an obj', oldPartner.id);
       }
 
       // get a new partner
@@ -112,23 +115,24 @@ module.exports = function(server) {
 
       // matched: send connected message
       if (socket.partner) {
-        var data = { msg: 'you have been rematched... start talking!', socket: socket.id, partner: socket.partner.id }
+        var data = { msg: 'you have been matched... start chatting!', socket: socket.id, partner: socket.partner.id }
         io.to(socket.partner.id).emit('match status', data);
         io.to(socket.id).emit('match status', data);
 
         // not matched: emit waiting message
-      } else {
-        io.to(socket.id).emit('match status', { msg: 'waiting for a new partner...', partner: null });
-      }
+      } 
       console.log('unmatched is now', unmatched.map(person => person.id));
     });
 
+    //////////////////
+    /// DISCONNECT ///
+    //////////////////
 
-    // if someone leaves the server
     socket.on('disconnect', function(reconnect) {
       var index;
       console.log('-----------------------');
       console.log(socket.id, 'disconnected from the server');
+      var oldPartner = socket.partner;
 
       // if someone from the unmatched queue disconnected, remove them from the queue
 
@@ -143,11 +147,10 @@ module.exports = function(server) {
       }
 
       // emit message to their partner that the person has left
-      if (socket.partner && socket.partner.id !== 'bot') {
-        io.to(socket.partner.id).emit('partner left', 'your partner left');
+      if (oldPartner && oldPartner.id !== 'bot') {
+        io.to(oldPartner.id).emit('partner left', {msg: 'your partner left', partner: 'disconnected'});
 
         // remove partner objects from both sockets and push the old partner to unmatched array
-        var oldPartner = socket.partner;
         oldPartner.partner = null;
         unmatched.push(oldPartner);
         socket.partner = null;
