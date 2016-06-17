@@ -1,5 +1,6 @@
 app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
-	
+	$scope.choiceForm = {$invalid: true}
+
   var socket = io();
   $scope.partner = null;
   var scores = {human: 0, robot: 0};
@@ -16,15 +17,18 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
   $scope.next = function(choiceForm) {
     var correct;
 
+    $scope.choiceForm = {}
     if ($scope.partner === 'bot') {
-      correct = (choiceForm.choice === $scope.partner) ? true : false;
-    } else {
-      correct = (choiceForm.choice !== 'bot') ? true : false;
+      correct = (choiceForm.choice === $scope.partner) ? 'correct' : 'incorrect';
+    } else if ($scope.partner === 'human'){
+      correct = (choiceForm.choice !== 'bot') ? 'correct' : 'incorrect';
+    } else if ($scope.partner === null) {
+      correct = 'na'
     }
 
     // increase score appropriately
-    if (correct) ScoreFactory.humans++;
-    else ScoreFactory.bots++;
+    // if (correct === 'correct') ScoreFactory.humans++;
+    // else ScoreFactory.bots++;
 
     ChatFactory.clearAllMessages();
     socket.emit('next');

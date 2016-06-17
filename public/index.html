@@ -10,7 +10,7 @@
 
 <body ng-controller='ChatCtrl'>
   <div id="container">
-  
+
     <!-- CHAT TEXT AREA -->
     <div id="first">
       <ul id="messages" ng-repeat="message in messages track by $index">
@@ -20,7 +20,7 @@
       <!-- CHAT BAR -->
       <form class="chatbox" novalidate>
         <input id="m" ng-model="input" name="input" autocomplete="off" required>
-        <button ng-click="postMessage()" ng-disable="!partner">Send</button>
+        <button ng-click="postMessage()" ng-disabled="!partner">Send</button>
       </form>
     </div>
 
@@ -32,15 +32,18 @@
       </div>
 
       <!-- CHOICE BUTTONS -->
+
       <div class="choice">
         <form name="choiceForm" ng-submit="next(choiceForm)">
-          <input type="radio" name="choice" value="human" ng-model="choiceForm.choice"> Human
+          <input type="radio" name="choice" value="human" ng-model="choiceForm.choice" ng-required="!choice"> Human
           <br>
-          <input type="radio" name="choice" value="bot" ng-model="choiceForm.choice"> Robot
+          <input type="radio" name="choice" value="bot" ng-model="choiceForm.choice" ng-required="!choice"> Robot
           <br>
           <br>
           <button>Submit and connect with a new partner</button>
+          </form>
       </div>
+
     </div>
 
   </div>

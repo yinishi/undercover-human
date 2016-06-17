@@ -60,6 +60,14 @@
     justify-content: center;
     /*outline: none;*/
   }
+  button :disabled {
+    width: 5vw;
+    padding: 1vw;
+    background: pink;
+    border: none;
+    justify-content: center;
+    /*outline: none;*/
+  }
 
   /* MESSAGE AREA */
   
@@ -81,7 +89,7 @@
     color: #cccccc;
     font-style: italic;
   }
-  
+
   /* SCORE BOARD STYLING */
   
   #scoreboard {

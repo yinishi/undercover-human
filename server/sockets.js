@@ -7,24 +7,10 @@ function coinFlip() {
   return Math.floor(Math.random() * 2 + 1);
 }
 
-function findPartner(mySocket) {
+function findPartner(socket) {
 
   // 50% chance of getting matched with a bot
   if (coinFlip() % 2) {
-
-    // make sure to delete self from match queue if connected with a bot
-    // // 1. find the index
-    // var index
-    //   unmatched.forEach(function(person, i) {
-    //     if (person.id === mySocket.id) index = i;
-    //   });
-
-    //   // 2. delete them from queue
-    //   console.log('searched for person in queue and they were found at', index)
-    //   if (typeof index === 'number') {
-    //     unmatched.splice(index, 1);
-    //   }
-
     return { id: 'bot' };
 
     // there are unmatched people
@@ -32,18 +18,18 @@ function findPartner(mySocket) {
     // if (unmatched.length > 0) {
 
     // make sure you don't get paired with yourself
-    if (unmatched[0].id === mySocket.id) {
+    if (unmatched[0].id === socket.id) {
       return unmatched.splice(1, 1);
     } else {
       var partner = unmatched.shift();
-      partner.partner = mySocket;
+      partner.partner = socket;
       return partner;
     }
 
     // there are no unmatched people, get added to the queue and wait
   } else if (unmatched.length < 1) {
-    unmatched.push(mySocket);
-    console.log(mySocket.id);
+    unmatched.push(socket);
+    console.log(socket.id);
     console.log('waiting for a partner');
   }
 }
