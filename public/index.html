@@ -2,57 +2,63 @@
 <html ng-app="bot">
 
 <head>
-  <title>Chatty</title>
+  <title>Bot Roulette</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
   <link href="https://fonts.googleapis.com/css?family=Quando" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Cutive+Mono" rel="stylesheet">
 </head>
 
-<body ng-controller='ChatCtrl'>
-  <div id="container">
+<body>
 
-    <!-- CHAT TEXT AREA -->
-    <div id="first">
-      <ul id="messages" ng-repeat="message in messages track by $index">
-        <li>{{message}}</li>
-      </ul>
-    </div>
+  <div id="container" ng-controller='ChatCtrl'>
 
-    <div class='chatbox'>
+    <div id="container-left">
+
+      <!-- MESSAGE AREA -->
+      <div id="left-top">
+        <ul id="messages" ng-repeat="message in messages track by $index">
+          <li>{{message}}</li>
+        </ul>
+      </div>
+
       <!-- CHAT BAR -->
-      <!-- <div id="test"> -->
-      <form class="chatbox" novalidate>
-        <input id="m" ng-model="input" name="input" autocomplete="off" required>
+      <div id='input-area'>
+        <form class="chatbox" novalidate>
+          <input id="m" ng-model="input" name="input" autocomplete="off" placeholder="start typing..." required>
 
-        <button ng-click="postMessage()" ng-disabled="waitingForPartner">Send</button>
-      </form>
-      <!-- </div> -->
+          <button ng-click="postMessage()" ng-disabled="waitingForPartner || !input">Send</button>
+        </form>
+      </div>
+
     </div>
 
-    <div id="second">
+    <div id="container-right">
 
-      <!-- TITLE BLOCK -->
-      <div id="third">
-        <!-- <h1>CATCHY NAME HERE</h1>
-        <p>yeah man</p> -->
+      <!-- TITLE BAR -->
+      <div id="title-bar">
+        <h1>Bot Roulette</h1>
+        <p class="subtitle">Where did all the humans go?</p>
+      </div>
+
+      <!-- SCOREBOARD -->
+      <div id="right-top">
         <scoreboard></scoreboard>
       </div>
 
       <!-- CHOICE BUTTONS -->
 
-      <div id="fourth">
+      <div id="right-bottom">
 
-        <h1>Guess</h1>
-        <hr> 
-        My partner is a...
+        <h2>Guess</h2>
+        <hr> My partner is a...
         <br>
         <br>
         <div>
           <form name="choiceForm" ng-submit="next(choiceForm)">
-            <input type="radio" name="choice" value="human" ng-model="choiceForm.choice" ng-required="!choice"> Human
+            <input type="radio" name="choice" value="human" ng-model="choiceForm.choice" ng-required="!choice">&nbsp;&nbsp;Human
             <br>
-            <input type="radio" name="choice" value="bot" ng-model="choiceForm.choice" ng-required="!choice"> Robot
+            <input type="radio" name="choice" value="bot" ng-model="choiceForm.choice" ng-required="!choice">&nbsp;&nbsp;Robot
             <br>
             <br>
             <button ng-disabled="!hasPartner">Submit and connect with a new partner</button>
@@ -67,10 +73,13 @@
         </p>
 
       </div>
+      <!-- end of right-bottom -->
 
     </div>
+    <!-- end of container right -->
 
   </div>
+  <!-- end of container -->
 
   <!-- SCRIPTS -->
   <script src="/lib/angular.js"></script>

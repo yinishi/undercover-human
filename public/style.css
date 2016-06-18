@@ -7,7 +7,7 @@
   body {
     font-family: 'Open Sans', sans-serif;
     /*font-weight: 300;*/
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 300;
     overflow: hidden;
   }
@@ -18,21 +18,34 @@
     margin: 15px 0;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
   }
-
+  
   h1 {
+    margin: 1px;
+    font-family: 'Cutive Mono', serif;
+    color: #EBE3AA;
+  }
+  
+  h2 {
     margin-bottom: 10px;
     font-family: 'Cutive Mono', serif;
+    font-size: 1.7em;
     color: #5D4157;
   }
-
+  
   p {
     margin-bottom: 15px;
   }
-
+  
   .bigger-text {
     font-size: 120%;
   }
-
+  
+  .subtitle {
+    font-family: 'Cutive Mono', serif;
+    color: #EBE3AA;
+    /*text-align: l;*/
+  }
+  
   button {
     padding: 10px;
     justify-content: center;
@@ -41,12 +54,12 @@
     word-wrap: break-word;
     font-family: 'Open Sans', sans-serif;
     font-size: 12px;
+    color: #5D4157;
   }
-
+  
   button:disabled {
     background: #d5d5d5;
   }
-
   /* CONTAINERS */
   
   #container {
@@ -54,7 +67,35 @@
     height: 90vh;
   }
   
-  #first {
+  #container-left {
+    margin: 0px auto;
+    width: 50%;
+    height: 100vh;
+    float: left;
+  }
+  
+  #container-right {
+    margin: 0px auto;
+    width: 50%;
+    height: 90vh;
+    float: left;
+  }
+  
+  #title-bar {
+    padding: 10px 20px;
+    height: 80px;
+    border-width: 1px 0 0 1px;
+    border-style: solid;
+    border-color: #424242;
+    background-color: #838689;
+    /* gray */
+    color: #EBE3AA;
+    /* yellow */
+    text-shadow: 1px 1px #5D4157;
+    /*purple*/
+  }
+  
+  #left-top {
     padding: 10px;
     margin: 0px auto;
     width: 50vw;
@@ -67,73 +108,42 @@
     border-color: #424242;
   }
   
-  #second {
+  #left-full {
+    padding: 10px;
     margin: 0px auto;
-    width: 50%;
-    height: 90vh;
+    width: 50vw;
+    height: 100vh;
+    overflow: auto;
     float: left;
+    background-color: #A8CABA;
+    border-width: 1px 0 1px 1px;
+    border-style: solid;
+    border-color: #424242;
   }
-
-  #third {
+  
+  #right-top {
     margin: 0px auto;
     padding: 20px;
     width: 100%;
     height: 40vh;
+    vertical-align: center;
     background-color: #CAD7B2;
     border: 1px solid #424242;
     overflow: auto;
   }
-
-  #fourth {
+  
+  #right-bottom {
     margin: 0px auto;
     padding: 20px;
     width: 100%;
     height: 60vh;
+    vertical-align: center;
     background-color: #EBE3AA;
     border-width: 0 1px 1px 1px;
     border-style: solid;
     border-color: #424242;
     overflow: auto;
   }
-
-  /* CHAT BOX INPUT AREA */
-  
-  .chatbox {
-    /*background: #000;*/
-    /*padding: 5px;*/
-    /*margin-bottom: 5px;*/
-    position: fixed;
-    bottom: 0;
-    height: 40px;
-    width: 50vw;
-  }
-
-  .chatbox input {
-    padding: 10px;
-    height: 40px;
-    width: calc(50vw - 50px);
-    display: inline-block;
-    margin-bottom: 0px;
-    border-width: 1px 0px 1px 1px;
-    border-style: solid;
-    border-color: #424242;
-    font-family: 'Open Sans', sans-serif;
-    outline: none;
-  }
-  
-  .chatbox button {
-    width: 50px;
-    height: 40px;
-    float: right;
-    background: white;
-    border-width: 1px 0 1px 1px;
-    border-style: solid;
-  }
-
-  button:disabled {
-    background: #d5d5d5;
-  }
-  
   /* MESSAGE AREA */
   
   #messages {
@@ -149,26 +159,52 @@
     font-family: 'Cutive Mono', serif;
     background-color: #ededed;
   }
-  /*  #messages li:nth-child(odd) {
-    background: #eee;
-  }
-  */
+
+  /* CHAT BOX INPUT AREA */
   
-  .automated-msg {
-    color: #cccccc;
-    font-style: italic;
+  #input-area {
+    position: fixed;
+    bottom: 0;
+    height: 40px;
+    width: 50vw;
   }
-
-
+  
+  #input-area input {
+    padding: 10px;
+    height: 40px;
+    width: calc(50vw - 50px);
+    display: inline-block;
+    margin-bottom: 0px;
+    border-width: 1px 0px 1px 1px;
+    border-style: solid;
+    border-color: #424242;
+    font-family: 'Cutive Mono', serif;
+    font-size: 15px;
+    outline: none;
+  }
+  
+  #input-area button {
+    width: 50px;
+    height: 40px;
+    float: right;
+    background: white;
+    border-width: 1px 0 1px 1px;
+    border-style: solid;
+    color: #5D4157;
+    /* purple */
+  }
+  
+  #input-area button:disabled {
+    background: #d5d5d5;
+  }
   /* SCORE BOARD STYLING */
+  
   .correct {
-    color: green; /* green */
+    color: green;
+    /* green */
   }
+  
   .incorrect {
-    color: red; /* red */
+    color: red;
+    /* red */
   }
-  
-
-
-  
-  

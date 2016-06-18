@@ -27,7 +27,7 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     $scope.hasPartner = !!pair.partner;
 
     // re-enable this to see all the vars
-    console.log('self:', pair.self, ', partner:', pair.partner, ', $scope.waitingForPartner:', $scope.waitingForPartner, 'hasPartner:', $scope.hasPartner);
+    // console.log('self:', pair.self, ', partner:', pair.partner, ', $scope.waitingForPartner:', $scope.waitingForPartner, 'hasPartner:', $scope.hasPartner);
 
     $scope.$apply(function() {
       ChatFactory.postMessage(matchData.msg);
@@ -41,15 +41,13 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     });
   });
 
+  // emitted from 'next' on server side
   socket.on('update score', function(fooledData) {
     // increase your "fooled your partner" score if the partner was fooled
     if (fooledData.partnerWasFooled) {
       console.log('your partner was fooled!');
       ScoreFactory.scores.fooledPartner++;
-    } else {
-      console.log('your partner saw right through you!');
-      // ScoreFactory.scores.fooledPartner++;
-    }
+    } 
   });
 
   ////////////////////////
