@@ -32,10 +32,9 @@
       <div id="fourth">
 
         <scoreboard></scoreboard>
-        <hr>
-
-        My partner is a...
-        <br><br>
+        <hr> My partner is a...
+        <br>
+        <br>
         <div>
           <form name="choiceForm" ng-submit="next(choiceForm)">
             <input type="radio" name="choice" value="human" ng-model="choiceForm.choice" ng-required="!choice"> Human
@@ -44,8 +43,16 @@
             <br>
             <br>
             <button ng-disabled="!partner">Submit and connect with a new partner</button>
+
           </form>
         </div>
+
+        <br>
+        <!-- Notification of whether you were correct -->
+        <p ng-class="{points: correct, strikes: !correct}">
+          {{message}}
+        </p>
+
       </div>
 
     </div>

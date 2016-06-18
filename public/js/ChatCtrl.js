@@ -21,6 +21,8 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     else 
       $scope.partner = Boolean(partner);
 
+    console.log('partner is', partner, '$scope.partner is', $scope.partner);
+
     $scope.$apply(function() {
       ChatFactory.postMessage(response.msg);
     });
@@ -62,20 +64,30 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
 
   // tied to the "Submit and connect with new partner" button
   $scope.next = function(choiceForm) {
-    var correct;
+    $scope.correct;
     $scope.partner = false; // set to false to disable send
     $scope.choiceForm = {};
 
     if (partner === 'bot') {
-      correct = (choiceForm.choice === 'bot') ? true : false;
+      $scope.correct = (choiceForm.choice === 'bot') ? true : false;
     } else if (partner !== 'bot') {
-      correct = (choiceForm.choice === 'bot') ? false : true;
+      $scope.correct = (choiceForm.choice === 'bot') ? false : true;
     }
 
-    if (correct === true) 
+    if ($scope.correct) 
       ScoreFactory.points++;
-    else if (correct === false) 
+    else if (!$scope.correct) 
       ScoreFactory.strikes++;
+
+    if ($scope.correct) {
+      $scope.message = (choiceForm.choice === 'bot') ?
+        'Correct! Your partner was a bot.' :
+        'Correct! Your partner was a human.';
+    } else {
+      $scope.message = (choiceForm.choice === 'bot') ?
+        'Wrong! Your partner was a human.' :
+        'Wrong! Your partner was a bot.';
+    }
 
     ChatFactory.clearAllMessages();
     socket.emit('next');

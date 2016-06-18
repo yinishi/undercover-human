@@ -52,8 +52,7 @@ module.exports = function(server) {
     function sendMatch() {
       // upon connection, either get matched with a partner or get added to the unmatched queue
       socket.partner = findPartner(socket);
-      var partner = socket.partner || 'n/a';
-      console.log('found a partner for', socket.id, ':', partner.id);
+      console.log(socket, 'is matched');
       console.log('unmatched users after match', unmatched.map(person => person.id));
       if (socket.partner) {
         var data = { msg: 'you have been matched... start chatting!', socket: socket.id, partner: socket.partner.id }
@@ -92,7 +91,7 @@ module.exports = function(server) {
     ///////////////////
 
     socket.on('next', function() {
-      // emit waiting message
+      // first, emit waiting message
       io.to(socket.id).emit('match status', { msg: 'waiting for a new partner...' });
 
       if (socket.partner && socket.partner !== 'disconnected') {

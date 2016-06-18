@@ -4,6 +4,7 @@ app.directive('scoreboard', function (ScoreFactory) {
     	templateUrl: '/templates/scores.html',
     	link: function(scope, element, attributes) {
     		scope.scores = ScoreFactory;
+
     	}
     };
 });
