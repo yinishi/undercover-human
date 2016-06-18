@@ -3,7 +3,7 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
   var socket = io();
   $scope.partner = false; // boolean: used for button disable only
   var partner = null; // stores the ID (bot, socket.id, or null)
-  var scores = {human: 0, robot: 0};
+  var scores = { human: 0, robot: 0 };
 
   $scope.messages = ChatFactory.getMessages();
 
@@ -11,17 +11,12 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
   /// SOCKET EVENT LISTENERS ///
   //////////////////////////////
 
-  // posts whether the person is connected or waiting
+  // set person's match status: connected, waiting, or partner left
   socket.on('match status', function(response) {
     partner = response.partner;
 
     // set the button disable variable upon match
-    if (partner === 'disconnected')
-      $scope.partner = 'disconnected';
-    else 
-      $scope.partner = Boolean(partner);
-
-    console.log('partner is', partner, '$scope.partner is', $scope.partner);
+    setPartnerBool(partner);
 
     $scope.$apply(function() {
       ChatFactory.postMessage(response.msg);
@@ -35,22 +30,6 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     });
   });
 
-  // posts a message when your partner leaves the chat
-  socket.on('partner left', function(response) {
-    partner = response.partner;
-
-    // set the button disable variable upon match
-    if (partner === 'disconnected')
-      $scope.partner = 'disconnected';
-    else 
-      $scope.partner = Boolean(partner);
-
-    $scope.$apply(function() {
-      ChatFactory.postMessage(response.msg);
-    });
-  });
-
-  
   ////////////////////////
   /// BUTTON FUNCTIONS ///
   ////////////////////////
@@ -64,7 +43,6 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
 
   // tied to the "Submit and connect with new partner" button
   $scope.next = function(choiceForm) {
-    $scope.correct;
     $scope.partner = false; // set to false to disable send
     $scope.choiceForm = {};
 
@@ -74,9 +52,9 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
       $scope.correct = (choiceForm.choice === 'bot') ? false : true;
     }
 
-    if ($scope.correct) 
+    if ($scope.correct)
       ScoreFactory.points++;
-    else if (!$scope.correct) 
+    else if (!$scope.correct)
       ScoreFactory.strikes++;
 
     if ($scope.correct) {
@@ -92,4 +70,17 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     ChatFactory.clearAllMessages();
     socket.emit('next');
   };
+
+  ////////////////////////
+  /// HELPER FUNCTIONS ///
+  ////////////////////////
+
+  function setPartnerBool(partner) {
+    // set the button disable variable upon match
+    if (partner === 'disconnected')
+      $scope.partner = 'disconnected';
+    else
+      $scope.partner = Boolean(partner);
+  }
+
 });

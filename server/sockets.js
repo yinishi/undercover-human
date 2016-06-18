@@ -164,7 +164,10 @@ module.exports = function(server) {
 
       // emit message to their partner that the person has left
       if (oldPartner && oldPartner.id !== 'bot') {
-        io.to(oldPartner.id).emit('partner left', { msg: 'your partner left', partner: 'disconnected' });
+        
+        // tell your old partner that you left
+        data = { msg: 'your partner left. please assess them before moving on.', socket: oldPartner.id, partner: 'disconnected' };
+        io.to(oldPartner.id).emit('match status', data);
 
         // remove partner objects from both sockets and push the old partner to unmatched array
         oldPartner.partner = null;
