@@ -25,7 +25,7 @@
       <form class="chatbox" novalidate>
         <input id="m" ng-model="input" name="input" autocomplete="off" required>
 
-        <button ng-click="postMessage()" ng-disabled="matched === 'disconnected' || !matched">Send</button>
+        <button ng-click="postMessage()" ng-disabled="waitingForPartner">Send</button>
       </form>
       <!-- </div> -->
     </div>
@@ -55,7 +55,7 @@
             <input type="radio" name="choice" value="bot" ng-model="choiceForm.choice" ng-required="!choice"> Robot
             <br>
             <br>
-            <button ng-disabled="!matched">Submit and connect with a new partner</button>
+            <button ng-disabled="!hasPartner">Submit and connect with a new partner</button>
 
           </form>
         </div>

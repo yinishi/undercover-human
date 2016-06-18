@@ -1,14 +1,15 @@
 app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
 
   var socket = io();
-  $scope.matched = false; // boolean: used for button disable only
+  $scope.waitingForPartner = false;
+  $scope.hasPartner = false;
+  // $scope.partner = false; // boolean: used for button disable only
   var pair = { // stores info about chat session
     self: null,
     partner: null,
+    waitingForPartner: true
   }; 
 
-  var scores = { human: 0, robot: 0 };
-  var formerPartner;
   $scope.messages = ChatFactory.getMessages();
 
   //////////////////////////////
@@ -16,29 +17,32 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
   //////////////////////////////
 
   // set person's match status: connected, waiting, or partner left
-  socket.on('match status', function(response) {
-    partner = response.partner;
+  socket.on('match status', function(matchData) {
+    pair.self = matchData.self;
+    pair.partner = matchData.partner;
+    $scope.waitingForPartner = matchData.waitingForPartner;
 
-    // if (response.hasOwnProperty('formerPartner') ) {
-    //   formerPartner = response.formerPartner;
+    // if (matchData.hasOwnProperty('formerPartner') ) {
+    //   formerPartner = matchData.formerPartner;
     // }
 
-    console.log('response in match status is', response);
-
     // set the button disable variable upon match
-    setPartnerBool(partner);
+    $scope.hasPartner = !!pair.partner;
 
-    if (response.hasOwnProperty('partnerGuessedCorrectly')) {
-      console.log('your partner was a human and guessed!', response.partnerGuessedCorrectly);
+    console.log('self:', pair.self, ', partner:', pair.partner, ', $scope.waitingForPartner:', $scope.waitingForPartner, 'hasPartner:', $scope.hasPartner);
+
+
+    if (matchData.hasOwnProperty('partnerGuessedCorrectly')) {
+      console.log('your partner was a human and guessed!', matchData.partnerGuessedCorrectly);
       ScoreFactory.scores.fooledPartner++;
     }
 
     $scope.$apply(function() {
-      ChatFactory.postMessage(response.msg);
+      ChatFactory.postMessage(matchData.msg);
     });
   });
 
-  // posts the response from the person you're chatting with
+  // posts the matchData from the person you're chatting with
   socket.on('reply', function(msg) {
     $scope.$apply(function() {
       ChatFactory.postMessage("partner: " + msg);
@@ -62,12 +66,12 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
 
   // tied to the "Submit and connect with new partner" button
   $scope.next = function(choiceForm) {
-    $scope.matched = false; // set to false to disable send
+    $scope.waitingForPartner = false; // set to false to disable send
     $scope.choiceForm = {};
 
-    if (partner === 'bot') {
+    if (pair.partner === 'bot') {
       $scope.correct = (choiceForm.choice === 'bot') ? true : false;
-    } else if (partner !== 'bot') {
+    } else if (pair.partner !== 'bot') {
       $scope.correct = (choiceForm.choice === 'bot') ? false : true;
     }
 
@@ -93,7 +97,7 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     // EMIT NEXT EVENT
     // emitting is only necessary if your partner was a human
     var guessData = {};
-    if (partner !== 'bot') {
+    if (pair.partner !== 'bot') {
       if ($scope.correct)
         guessData.partnerGuessedCorrectly = true;
       else
@@ -115,12 +119,8 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
   /// HELPER FUNCTIONS ///
   ////////////////////////
 
-  function setPartnerBool(partner) {
-    // set the button disable variable upon match
-    if (partner === 'disconnected')
-      $scope.matched = 'disconnected';
-    else
-      $scope.matched = Boolean(partner);
-  }
+  // function setPartnerBool(partner) {
+  //     $scope.partner = Boolean(pair.partner);
+  // }
 
 });

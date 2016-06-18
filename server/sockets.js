@@ -22,7 +22,10 @@ function findPartner(socket) {
 
   // 50% chance of getting matched with a bot
   if (coinFlip() % 2) {
-    return { id: 'bot', matched: true };
+    return { 
+      id: 'bot', 
+      waitingForPartner: false 
+    };
 
     // there are unmatched people
   } else if (unmatched.length > 0) {
@@ -75,7 +78,8 @@ module.exports = function(server) {
     io.to(socket.id).emit('match status', {
       msg: waitingMsg,
       self: socket.id,
-      partner: null
+      partner: null,
+      waitingForPartner: true
     });
 
     setTimeout(sendMatch, timeout);
@@ -88,16 +92,16 @@ module.exports = function(server) {
       console.log('person connected:', socket.id, 'partner: ', socket.partner || 'none');
       console.log('unmatched users after match', unmatched.map(person => person.id));
 
+
+      // got matched with a partner
       if (socket.partner) {
-        // set match status of both to be true
-        socket.matched = true;
-        socket.partner.matched = true;
 
         // emit match status to self
         io.to(socket.id).emit('match status', {
           msg: gotMatchedMsg,
           self: socket.id,
           partner: socket.partner.id,
+          waitingForPartner: false
         });
 
         // emit match status to partner
@@ -105,6 +109,7 @@ module.exports = function(server) {
           msg: gotMatchedMsg,
           self: socket.partner.id,
           partner: socket.id,
+          waitingForPartner: false
         });
 
       }
@@ -148,13 +153,11 @@ module.exports = function(server) {
         msg: waitingMsg,
         self: socket.id,
         partner: null,
+        waitingForPartner: true
       });
 
       // if partner exists and partner is not a bot
       if (socket.partner && socket.partner.id !== 'bot') {
-        // set matched statuses to false
-        socket.matched = false;
-        socket.partner.matched = false;
         var oldPartner = socket.partner;
         console.log(socket.id, 'disconnected from their partner,', oldPartner.id);
 
@@ -162,7 +165,7 @@ module.exports = function(server) {
           msg: partnerLeftMsg,
           self: oldPartner.id,
           partner: socket.id,
-          connected: false
+          waitingForPartner: true
         }
 
         if (guessData) {
@@ -181,19 +184,18 @@ module.exports = function(server) {
       socket.partner = findPartner(socket);
 
 
-      // console.log('person connected:', socket.id, 'partner: ', socket.partner.id);
+      console.log('person connected:', socket.id);
       console.log('unmatched users after match', unmatched.map(person => person.id));
 
+      // partner exists
       if (socket.partner) {
-        // set status of both to be true
-        socket.matched = true;
-        socket.partner.matched = true;
 
         // emit match status to self
         io.to(socket.id).emit('match status', {
           msg: gotMatchedMsg,
           self: socket.id,
           partner: socket.partner.id,
+          waitingForPartner: false
         });
 
         // emit match status to partner
@@ -201,6 +203,7 @@ module.exports = function(server) {
           msg: gotMatchedMsg,
           self: socket.partner.id,
           partner: socket.id,
+          waitingForPartner: false
         });
       }
 
@@ -220,20 +223,19 @@ module.exports = function(server) {
       console.log('-----------------------');
       console.log(socket.id, 'disconnected from the server');
 
-      socket.matched = false;
-    
       // if someone from the queue disconnects, remove them from the queue
       removeSelfFromQueue(socket.id);
 
       // emit message to their partner that the person has left
       if (socket.partner && socket.partner.id !== 'bot') {
         var oldPartner = socket.partner;
-        oldPartner.matched = false;
+
         // tell your old partner that you left
         io.to(oldPartner.id).emit('match status', {
           msg: partnerLeftMsg,
           self: oldPartner.id,
-          partner: socket.id
+          partner: socket.id,
+          waitingForPartner: false
         });
 
         // remove partner objects from both sockets
