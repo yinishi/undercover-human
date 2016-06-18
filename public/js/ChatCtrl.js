@@ -1,14 +1,15 @@
 app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
 
   var socket = io();
-  $scope.waitingForPartner = false;
-  $scope.hasPartner = false;
-  // $scope.partner = false; // boolean: used for button disable only
+
+  $scope.waitingForPartner = false; // toggles send button
+  $scope.hasPartner = false; // toggles submit button
+
   var pair = { // stores info about chat session
     self: null,
     partner: null,
     waitingForPartner: true
-  }; 
+  };
 
   $scope.messages = ChatFactory.getMessages();
 
@@ -22,20 +23,11 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     pair.partner = matchData.partner;
     $scope.waitingForPartner = matchData.waitingForPartner;
 
-    // if (matchData.hasOwnProperty('formerPartner') ) {
-    //   formerPartner = matchData.formerPartner;
-    // }
-
     // set the button disable variable upon match
     $scope.hasPartner = !!pair.partner;
 
+    // re-enable this to see all the vars
     console.log('self:', pair.self, ', partner:', pair.partner, ', $scope.waitingForPartner:', $scope.waitingForPartner, 'hasPartner:', $scope.hasPartner);
-
-
-    if (matchData.hasOwnProperty('partnerGuessedCorrectly')) {
-      console.log('your partner was a human and guessed!', matchData.partnerGuessedCorrectly);
-      ScoreFactory.scores.fooledPartner++;
-    }
 
     $scope.$apply(function() {
       ChatFactory.postMessage(matchData.msg);
@@ -49,9 +41,16 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     });
   });
 
-  // socket.on('update score', function(partnerGuessedCorrectly) {
-  //   if (!partnerGuessedCorrectly) ScoreFactory.scores.fooledPartner++;
-  // });
+  socket.on('update score', function(fooledData) {
+    // increase your "fooled your partner" score if the partner was fooled
+    if (fooledData.partnerWasFooled) {
+      console.log('your partner was fooled!');
+      ScoreFactory.scores.fooledPartner++;
+    } else {
+      console.log('your partner saw right through you!');
+      // ScoreFactory.scores.fooledPartner++;
+    }
+  });
 
   ////////////////////////
   /// BUTTON FUNCTIONS ///
@@ -97,30 +96,9 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     // EMIT NEXT EVENT
     // emitting is only necessary if your partner was a human
     var guessData = {};
-    if (pair.partner !== 'bot') {
-      if ($scope.correct)
-        guessData.partnerGuessedCorrectly = true;
-      else
-        guessData.partnerGuessedCorrectly = false;
+    guessData.partnerWasFooled = !$scope.correct;
 
-      // if (formerPartner) {
-      //   guessData.formerPartner = formerPartner
-      //   socket.emit('notify formerPartner', guessData)
-      // }
-
-      socket.emit('next', guessData);
-    } else {
-      socket.emit('next');
-    }
-
+    socket.emit('next', guessData);
   };
-
-  ////////////////////////
-  /// HELPER FUNCTIONS ///
-  ////////////////////////
-
-  // function setPartnerBool(partner) {
-  //     $scope.partner = Boolean(pair.partner);
-  // }
 
 });

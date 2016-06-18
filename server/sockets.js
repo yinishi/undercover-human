@@ -2,7 +2,8 @@ var socketio = require('socket.io');
 var bot = require('./bot').bot;
 
 var unmatched = [];
-var timeout = Math.random() * 6000 + 1000;
+var matchTimeout = Math.random() * 4000 + 2000;
+var botResponseRate = Math.random() * 200 + 1300;
 
 // DATA VARS
 var gotMatchedMsg = 'you have been matched... start chatting!';
@@ -22,9 +23,9 @@ function findPartner(socket) {
 
   // 50% chance of getting matched with a bot
   if (coinFlip() % 2) {
-    return { 
-      id: 'bot', 
-      waitingForPartner: false 
+    return {
+      id: 'bot',
+      waitingForPartner: false
     };
 
     // there are unmatched people
@@ -69,10 +70,14 @@ function removeSelfFromQueue(id) {
 module.exports = function(server) {
   var io = socketio(server);
 
+  /////////////////////
+  /// ON CONNECTION ///
+  /////////////////////
+
   io.on('connection', function(socket) {
     console.log('-----------------');
     console.log(socket.id, 'connected');
-    console.log('unmatched users after joining', unmatched.map(person => person.id));
+    // console.log('unmatched users after joining', unmatched.map(person => person.id));
 
     // not matched: emit waiting message
     io.to(socket.id).emit('match status', {
@@ -82,14 +87,14 @@ module.exports = function(server) {
       waitingForPartner: true
     });
 
-    setTimeout(sendMatch, timeout);
+    setTimeout(sendMatch, matchTimeout);
     // matched: send connected message
 
     function sendMatch() {
       // upon connection, either get matched with a partner or get added to the unmatched queue
       socket.partner = findPartner(socket);
 
-      console.log('person connected:', socket.id, 'partner: ', socket.partner || 'none');
+      console.log('person got matched:', socket.id);
       console.log('unmatched users after match', unmatched.map(person => person.id));
 
 
@@ -112,6 +117,15 @@ module.exports = function(server) {
           waitingForPartner: false
         });
 
+        // sometimes the bot makes the first contact
+        if (socket.partner.id === 'bot') {
+          if (coinFlip() % 2 === 0) {
+            setTimeout(function() {
+              io.to(socket.id).emit('reply', bot.reply(socket.id, "hi"));
+            }, botResponseRate);
+
+          }
+        }
       }
 
     }
@@ -131,10 +145,10 @@ module.exports = function(server) {
         // set a delay so the bot does not respond immediately
         setTimeout(function() {
           io.to(socket.id).emit('reply', bot.reply(socket.id, msg));
-        }, timeout);
+        }, botResponseRate);
 
-      
-      // if your partner is human...
+
+        // if your partner is human...
       } else {
         io.to(socket.partner.id).emit('reply', msg);
       }
@@ -158,6 +172,15 @@ module.exports = function(server) {
 
       // if partner exists and partner is not a bot
       if (socket.partner && socket.partner.id !== 'bot') {
+
+        // EMIT SCORES
+        if (guessData.hasOwnProperty('partnerWasFooled')) {
+          io.to(socket.partner.id).emit('update score', {
+            partnerWasFooled: guessData.partnerWasFooled
+          });
+        }
+
+        // EMIT MATCH INFORMATION
         var oldPartner = socket.partner;
         console.log(socket.id, 'disconnected from their partner,', oldPartner.id);
 
@@ -166,18 +189,14 @@ module.exports = function(server) {
           self: oldPartner.id,
           partner: socket.id,
           waitingForPartner: true
-        }
-
-        if (guessData) {
-          dataToPartner.partnerGuessedCorrectly = guessData.partnerGuessedCorrectly;
-        }
+        };
 
         // tell your old partner that you left
         io.to(oldPartner.id).emit('match status', dataToPartner);
 
         // reset partners
         socket.partner = null;
-        oldPartner.partner = null;
+        // oldPartner.partner = null;
       }
 
       // get a new partner
@@ -205,6 +224,15 @@ module.exports = function(server) {
           partner: socket.id,
           waitingForPartner: false
         });
+
+        // sometimes the bot makes the first contact
+        if (socket.partner.id === 'bot') {
+          if (coinFlip() % 2 === 0) {
+            setTimeout(function() {
+              io.to(socket.id).emit('reply', bot.reply(socket.id, "hi"));
+            }, botResponseRate);
+          }
+        }
       }
 
 
