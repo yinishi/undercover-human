@@ -1,8 +1,12 @@
 app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
 
   var socket = io();
-  $scope.partner = false; // boolean: used for button disable only
-  var partner = null; // stores the ID (bot, socket.id, or null)
+  $scope.matched = false; // boolean: used for button disable only
+  var pair = { // stores info about chat session
+    self: null,
+    partner: null,
+  }; 
+
   var scores = { human: 0, robot: 0 };
   var formerPartner;
   $scope.messages = ChatFactory.getMessages();
@@ -58,7 +62,7 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
 
   // tied to the "Submit and connect with new partner" button
   $scope.next = function(choiceForm) {
-    $scope.partner = false; // set to false to disable send
+    $scope.matched = false; // set to false to disable send
     $scope.choiceForm = {};
 
     if (partner === 'bot') {
@@ -114,9 +118,9 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
   function setPartnerBool(partner) {
     // set the button disable variable upon match
     if (partner === 'disconnected')
-      $scope.partner = 'disconnected';
+      $scope.matched = 'disconnected';
     else
-      $scope.partner = Boolean(partner);
+      $scope.matched = Boolean(partner);
   }
 
 });

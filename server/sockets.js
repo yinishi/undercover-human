@@ -1,9 +1,13 @@
 var socketio = require('socket.io');
 var bot = require('./bot').bot;
 
-
 var unmatched = [];
 var timeout = Math.random() * 6000 + 1000;
+
+// DATA VARS
+var gotMatchedMsg = 'you have been matched... start chatting!';
+var partnerLeftMsg = 'your partner left. please assess them before moving on.';
+var waitingMsg = 'waiting for partner...';
 
 
 ////////////////////////
@@ -18,7 +22,7 @@ function findPartner(socket) {
 
   // 50% chance of getting matched with a bot
   if (coinFlip() % 2) {
-    return { id: 'bot' };
+    return { id: 'bot', matched: true };
 
     // there are unmatched people
   } else if (unmatched.length > 0) {
@@ -67,24 +71,44 @@ module.exports = function(server) {
     console.log(socket.id, 'connected');
     console.log('unmatched users after joining', unmatched.map(person => person.id));
 
-    io.to(socket.id).emit('match status', { msg: 'waiting for partner...' });
-
     // not matched: emit waiting message
+    io.to(socket.id).emit('match status', {
+      msg: waitingMsg,
+      self: socket.id,
+      partner: null
+    });
+
     setTimeout(sendMatch, timeout);
     // matched: send connected message
 
     function sendMatch() {
       // upon connection, either get matched with a partner or get added to the unmatched queue
       socket.partner = findPartner(socket);
-      var partner = socket.partner || 'none'
-      console.log('person connected:', socket.id, 'partner: ', partner);
+
+      console.log('person connected:', socket.id, 'partner: ', socket.partner || 'none');
       console.log('unmatched users after match', unmatched.map(person => person.id));
+
       if (socket.partner) {
-        var data = { msg: 'you have been matched... start chatting!', socket: socket.id, partner: socket.partner.id }
-        io.to(socket.partner.id).emit('match status', data);
-        io.to(socket.id).emit('match status', data);
+        // set match status of both to be true
+        socket.matched = true;
+        socket.partner.matched = true;
+
+        // emit match status to self
+        io.to(socket.id).emit('match status', {
+          msg: gotMatchedMsg,
+          self: socket.id,
+          partner: socket.partner.id,
+        });
+
+        // emit match status to partner
+        io.to(socket.partner.id).emit('match status', {
+          msg: gotMatchedMsg,
+          self: socket.partner.id,
+          partner: socket.id,
+        });
 
       }
+
     }
 
 
@@ -94,17 +118,18 @@ module.exports = function(server) {
 
     // upon receiving the first message...
     socket.on('chat message', function(msg) {
+
       // if your partner is a bot...
       if (socket.partner.id === 'bot') {
         console.log(socket.id, 'is chatting with bot');
-        // io.to() emits the response to the socket that sent the message only
 
+        // set a delay so the bot does not respond immediately
         setTimeout(function() {
           io.to(socket.id).emit('reply', bot.reply(socket.id, msg));
         }, timeout);
 
-
-        // if your partner is human...
+      
+      // if your partner is human...
       } else {
         io.to(socket.partner.id).emit('reply', msg);
       }
@@ -116,25 +141,36 @@ module.exports = function(server) {
     ///////////////////
 
     socket.on('next', function(guessData) {
-      // first, emit waiting message
       console.log('--------------------');
-      io.to(socket.id).emit('match status', { msg: 'waiting for a new partner...' });
-      console.log('unmatched is now', unmatched.map(person => person.id));
 
-      // if the person who disconnected has a partner
-      if (socket.partner && socket.partner !== 'disconnected') {
+      // emit waiting message to self
+      io.to(socket.id).emit('match status', {
+        msg: waitingMsg,
+        self: socket.id,
+        partner: null,
+      });
+
+      // if partner exists and partner is not a bot
+      if (socket.partner && socket.partner.id !== 'bot') {
+        // set matched statuses to false
+        socket.matched = false;
+        socket.partner.matched = false;
         var oldPartner = socket.partner;
+        console.log(socket.id, 'disconnected from their partner,', oldPartner.id);
 
-        console.log(socket.id, 'disconnected from their partner,', socket.partner.id);
-
-        // tell your old partner that you left
-        var data = { msg: 'your partner left. please assess them before moving on.', formerPartner: socket.id, partner: 'disconnected' };
-
-        if (guessData) {
-          data.partnerGuessedCorrectly = guessData.partnerGuessedCorrectly;
+        var dataToPartner = {
+          msg: partnerLeftMsg,
+          self: oldPartner.id,
+          partner: socket.id,
+          connected: false
         }
 
-        io.to(oldPartner.id).emit('match status', data);
+        if (guessData) {
+          dataToPartner.partnerGuessedCorrectly = guessData.partnerGuessedCorrectly;
+        }
+
+        // tell your old partner that you left
+        io.to(oldPartner.id).emit('match status', dataToPartner);
 
         // reset partners
         socket.partner = null;
@@ -144,15 +180,31 @@ module.exports = function(server) {
       // get a new partner
       socket.partner = findPartner(socket);
 
-      // matched: send connected message
-      if (socket.partner) {
-        var data = { msg: 'you have been matched... start chatting!', socket: socket.id, partner: socket.partner.id }
-        io.to(socket.partner.id).emit('match status', data);
-        io.to(socket.id).emit('match status', data);
 
-        // not matched: emit waiting message
+      // console.log('person connected:', socket.id, 'partner: ', socket.partner.id);
+      console.log('unmatched users after match', unmatched.map(person => person.id));
+
+      if (socket.partner) {
+        // set status of both to be true
+        socket.matched = true;
+        socket.partner.matched = true;
+
+        // emit match status to self
+        io.to(socket.id).emit('match status', {
+          msg: gotMatchedMsg,
+          self: socket.id,
+          partner: socket.partner.id,
+        });
+
+        // emit match status to partner
+        io.to(socket.partner.id).emit('match status', {
+          msg: gotMatchedMsg,
+          self: socket.partner.id,
+          partner: socket.id,
+        });
       }
-      console.log('unmatched is now', unmatched.map(person => person.id));
+
+
     });
 
     // socket.on('notify formerPartner', function(guessData) {
@@ -167,21 +219,26 @@ module.exports = function(server) {
       var index;
       console.log('-----------------------');
       console.log(socket.id, 'disconnected from the server');
-      var oldPartner = socket.partner;
 
+      socket.matched = false;
+    
       // if someone from the queue disconnects, remove them from the queue
       removeSelfFromQueue(socket.id);
 
       // emit message to their partner that the person has left
-      if (oldPartner && oldPartner.id !== 'bot') {
-        
+      if (socket.partner && socket.partner.id !== 'bot') {
+        var oldPartner = socket.partner;
+        oldPartner.matched = false;
         // tell your old partner that you left
-        data = { msg: 'your partner left. please assess them before moving on.', socket: oldPartner.id, partner: 'disconnected' };
-        io.to(oldPartner.id).emit('match status', data);
+        io.to(oldPartner.id).emit('match status', {
+          msg: partnerLeftMsg,
+          self: oldPartner.id,
+          partner: socket.id
+        });
 
-        // remove partner objects from both sockets and push the old partner to unmatched array
-        oldPartner.partner = null;
+        // remove partner objects from both sockets
         console.log('abandoned partner is', oldPartner.id);
+        oldPartner.partner = null;
         socket.partner = null;
       }
 
