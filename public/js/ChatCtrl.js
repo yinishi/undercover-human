@@ -4,7 +4,7 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
   $scope.partner = false; // boolean: used for button disable only
   var partner = null; // stores the ID (bot, socket.id, or null)
   var scores = { human: 0, robot: 0 };
-
+  var formerPartner;
   $scope.messages = ChatFactory.getMessages();
 
   //////////////////////////////
@@ -15,8 +15,19 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
   socket.on('match status', function(response) {
     partner = response.partner;
 
+    // if (response.hasOwnProperty('formerPartner') ) {
+    //   formerPartner = response.formerPartner;
+    // }
+
+    console.log('response in match status is', response);
+
     // set the button disable variable upon match
     setPartnerBool(partner);
+
+    if (response.hasOwnProperty('partnerGuessedCorrectly')) {
+      console.log('your partner was a human and guessed!', response.partnerGuessedCorrectly);
+      ScoreFactory.scores.fooledPartner++;
+    }
 
     $scope.$apply(function() {
       ChatFactory.postMessage(response.msg);
@@ -29,6 +40,10 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
       ChatFactory.postMessage("partner: " + msg);
     });
   });
+
+  // socket.on('update score', function(partnerGuessedCorrectly) {
+  //   if (!partnerGuessedCorrectly) ScoreFactory.scores.fooledPartner++;
+  // });
 
   ////////////////////////
   /// BUTTON FUNCTIONS ///
@@ -52,11 +67,13 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
       $scope.correct = (choiceForm.choice === 'bot') ? false : true;
     }
 
+    // calculate points
     if ($scope.correct)
-      ScoreFactory.points++;
+      ScoreFactory.scores.correctGuesses++;
     else if (!$scope.correct)
-      ScoreFactory.strikes++;
+      ScoreFactory.scores.fooledByPartner++;
 
+    // generate notification
     if ($scope.correct) {
       $scope.message = (choiceForm.choice === 'bot') ?
         'Correct! Your partner was a bot.' :
@@ -68,7 +85,26 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     }
 
     ChatFactory.clearAllMessages();
-    socket.emit('next');
+
+    // EMIT NEXT EVENT
+    // emitting is only necessary if your partner was a human
+    var guessData = {};
+    if (partner !== 'bot') {
+      if ($scope.correct)
+        guessData.partnerGuessedCorrectly = true;
+      else
+        guessData.partnerGuessedCorrectly = false;
+
+      // if (formerPartner) {
+      //   guessData.formerPartner = formerPartner
+      //   socket.emit('notify formerPartner', guessData)
+      // }
+
+      socket.emit('next', guessData);
+    } else {
+      socket.emit('next');
+    }
+
   };
 
   ////////////////////////

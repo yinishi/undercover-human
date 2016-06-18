@@ -19,20 +19,33 @@
       </ul>
     </div>
 
+    <div class='chatbox'>
+      <!-- CHAT BAR -->
+      <!-- <div id="test"> -->
+      <form class="chatbox" novalidate>
+        <input id="m" ng-model="input" name="input" autocomplete="off" required>
+        <!-- {{partner}} -->
+        <button ng-click="postMessage()" ng-disabled="partner === 'disconnected' || !partner">Send</button>
+      </form>
+      <!-- </div> -->
+    </div>
+
     <div id="second">
 
       <!-- TITLE BLOCK -->
       <div id="third">
-        <h1>CATCHY NAME HERE</h1>
-        <p>yeah man</p>
+        <!-- <h1>CATCHY NAME HERE</h1>
+        <p>yeah man</p> -->
+        <scoreboard></scoreboard>
       </div>
 
       <!-- CHOICE BUTTONS -->
 
       <div id="fourth">
 
-        <scoreboard></scoreboard>
-        <hr> My partner is a...
+        <h1>Guess</h1>
+        <hr> 
+        My partner is a...
         <br>
         <br>
         <div>
@@ -49,7 +62,7 @@
 
         <br>
         <!-- Notification of whether you were correct -->
-        <p ng-class="{points: correct, strikes: !correct}">
+        <p ng-class="{correct: correct, incorrect: !correct}">
           {{message}}
         </p>
 
@@ -57,16 +70,6 @@
 
     </div>
 
-    <div class='chatbox'>
-      <!-- CHAT BAR -->
-      <!-- <div id="test"> -->
-      <form class="chatbox" novalidate>
-        <input id="m" ng-model="input" name="input" autocomplete="off" required>
-        <!-- {{partner}} -->
-        <button ng-click="postMessage()" ng-disabled="partner === 'disconnected' || !partner">Send</button>
-      </form>
-      <!-- </div> -->
-    </div>
   </div>
 
   <!-- SCRIPTS -->

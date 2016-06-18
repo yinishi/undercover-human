@@ -76,7 +76,8 @@ module.exports = function(server) {
     function sendMatch() {
       // upon connection, either get matched with a partner or get added to the unmatched queue
       socket.partner = findPartner(socket);
-      console.log(socket.id, 'just connected and is now matched');
+      var partner = socket.partner || 'none'
+      console.log('person connected:', socket.id, 'partner: ', partner);
       console.log('unmatched users after match', unmatched.map(person => person.id));
       if (socket.partner) {
         var data = { msg: 'you have been matched... start chatting!', socket: socket.id, partner: socket.partner.id }
@@ -114,20 +115,25 @@ module.exports = function(server) {
     ///    NEXT     ///
     ///////////////////
 
-    socket.on('next', function() {
+    socket.on('next', function(guessData) {
       // first, emit waiting message
       console.log('--------------------');
       io.to(socket.id).emit('match status', { msg: 'waiting for a new partner...' });
       console.log('unmatched is now', unmatched.map(person => person.id));
 
+      // if the person who disconnected has a partner
       if (socket.partner && socket.partner !== 'disconnected') {
-
-        console.log(socket.id, 'disconnected from their partner,', socket.partner.id);
         var oldPartner = socket.partner;
 
+        console.log(socket.id, 'disconnected from their partner,', socket.partner.id);
 
         // tell your old partner that you left
-        var data = { msg: 'your partner left. please assess them before moving on.', socket: oldPartner.id, partner: 'disconnected' };
+        var data = { msg: 'your partner left. please assess them before moving on.', formerPartner: socket.id, partner: 'disconnected' };
+
+        if (guessData) {
+          data.partnerGuessedCorrectly = guessData.partnerGuessedCorrectly;
+        }
+
         io.to(oldPartner.id).emit('match status', data);
 
         // reset partners
@@ -149,11 +155,15 @@ module.exports = function(server) {
       console.log('unmatched is now', unmatched.map(person => person.id));
     });
 
+    // socket.on('notify formerPartner', function(guessData) {
+    //   io.to(guessData.formerPartner).emit('update score', guessData.partnerGuessedCorrectly);
+    // })
+
     //////////////////
     /// DISCONNECT ///
     //////////////////
 
-    socket.on('disconnect', function(reconnect) {
+    socket.on('disconnect', function() {
       var index;
       console.log('-----------------------');
       console.log(socket.id, 'disconnected from the server');

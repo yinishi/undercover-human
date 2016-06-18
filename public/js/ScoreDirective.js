@@ -3,8 +3,8 @@ app.directive('scoreboard', function (ScoreFactory) {
     	restrict: 'E',
     	templateUrl: '/templates/scores.html',
     	link: function(scope, element, attributes) {
-    		scope.scores = ScoreFactory;
-
+    		scope.scores = ScoreFactory.scores;
+    		scope.totalScore = ScoreFactory.getTotalScore();
     	}
     };
 });

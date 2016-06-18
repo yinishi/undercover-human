@@ -1,8 +1,16 @@
 app.factory('ScoreFactory', function() {
+	var scoreFac = {};
 
-	return {
-		points: 0,
-		strikes: 0
+	scoreFac.scores = {
+		correctGuesses: 0,
+		fooledPartner: 0,
+		fooledByPartner: 0
 	};
+
+	scoreFac.getTotalScore = function() {
+		return scoreFac.scores.correctGuesses + scoreFac.scores.fooledPartner * 2 - scoreFac.scores.fooledByPartner;
+	};
+
+	return scoreFac;
 
 });
