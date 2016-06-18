@@ -1,8 +1,14 @@
 var socketio = require('socket.io');
 var bot = require('./bot').bot;
 
+
 var unmatched = [];
-var timeout = Math.random() * 6000;
+var timeout = Math.random() * 6000 + 1000;
+
+
+////////////////////////
+/// HELPER FUNCTIONS ///
+////////////////////////
 
 function coinFlip() {
   return Math.floor(Math.random() * 2 + 1);
@@ -16,24 +22,42 @@ function findPartner(socket) {
 
     // there are unmatched people
   } else if (unmatched.length > 0) {
-    // if (unmatched.length > 0) {
 
     // make sure you don't get paired with yourself
-    if (unmatched[0].id === socket.id) {
-      return unmatched.splice(1, 1);
-    } else {
-      var partner = unmatched.shift();
-      partner.partner = socket;
-      return partner;
-    }
+    // if (unmatched[0].id === socket.id) {
+    //   return unmatched.splice(1, 1);
+    // } else {
 
-    // there are no unmatched people, get added to the queue and wait
+    var partner = unmatched.shift();
+    partner.partner = socket;
+    return partner;
+
+    // there are no unmatched people, get added to the queue and wait. THIS IS THE ONLY PLACE IN THE ENTIRE PROGRAM WHERE SOMEONE EVER SHOULD GET PUSHED TO THE QUEUE.
   } else if (unmatched.length < 1) {
     unmatched.push(socket);
     console.log(socket.id);
     console.log('waiting for a partner');
   }
 }
+
+// this function should be only used on people who are CURRENTLY waiting in the queue
+function removeSelfFromQueue(id) {
+  console.log('queue length is', unmatched.length);
+  // 1. find the index
+  unmatched.forEach(function(person, i) {
+    if (person.id === id) index = i;
+  });
+
+  // 2. delete them from queue
+  if (typeof index === 'number') {
+    unmatched.splice(index, 1);
+    console.log('removed from queue', unmatched.length);
+  } else console.log('not in queue, not removed', unmatched.length);
+}
+
+//////////////////////////
+/// SOCKETS START HERE ///
+//////////////////////////
 
 module.exports = function(server) {
   var io = socketio(server);
@@ -52,7 +76,7 @@ module.exports = function(server) {
     function sendMatch() {
       // upon connection, either get matched with a partner or get added to the unmatched queue
       socket.partner = findPartner(socket);
-      console.log(socket, 'is matched');
+      console.log(socket.id, 'just connected and is now matched');
       console.log('unmatched users after match', unmatched.map(person => person.id));
       if (socket.partner) {
         var data = { msg: 'you have been matched... start chatting!', socket: socket.id, partner: socket.partner.id }
@@ -92,10 +116,12 @@ module.exports = function(server) {
 
     socket.on('next', function() {
       // first, emit waiting message
+      console.log('--------------------');
       io.to(socket.id).emit('match status', { msg: 'waiting for a new partner...' });
+      console.log('unmatched is now', unmatched.map(person => person.id));
 
       if (socket.partner && socket.partner !== 'disconnected') {
-        console.log('--------------------');
+
         console.log(socket.id, 'disconnected from their partner,', socket.partner.id);
         var oldPartner = socket.partner;
 
@@ -133,17 +159,8 @@ module.exports = function(server) {
       console.log(socket.id, 'disconnected from the server');
       var oldPartner = socket.partner;
 
-      // if someone from the unmatched queue disconnected, remove them from the queue
-
-      // 1. find the index
-      unmatched.forEach(function(person, i) {
-        if (person.id === socket.id) index = i;
-      });
-
-      // 2. delete them from queue
-      if (typeof index === 'number') {
-        unmatched.splice(index, 1);
-      }
+      // if someone from the queue disconnects, remove them from the queue
+      removeSelfFromQueue(socket.id);
 
       // emit message to their partner that the person has left
       if (oldPartner && oldPartner.id !== 'bot') {
@@ -151,11 +168,9 @@ module.exports = function(server) {
 
         // remove partner objects from both sockets and push the old partner to unmatched array
         oldPartner.partner = null;
-        unmatched.push(oldPartner);
+        console.log('abandoned partner is', oldPartner.id);
         socket.partner = null;
       }
-      // console.log('reconnecting', socket);
-      // socket.io.reconnect();
 
     });
 
