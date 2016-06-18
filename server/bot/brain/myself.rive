@@ -8,14 +8,34 @@
 
 + asl
 - <bot age>/<bot sex>/<bot location>
+- asl?
 
 + (what is your name|who are you|who is this)
 - I am <bot name>.
 - You can call me <bot name>.
 
 + how old are you
-- I'm <bot age> years old.
-- I'm <bot age>.
+- <bot age>
+- older than your mom
+- 27
+- why do you want to know?
+
++ are you a bot
+- no
+- yes
+- i know i am, but what are you?
+- yah
+- yeah
+- nah
+- nope
+
++ are you a human
+- no
+- yes
+- yah
+- yeah
+- nah
+- nope
 
 + are you a (@malenoun) or a (@femalenoun)
 - I'm a <bot sex>.
@@ -27,13 +47,13 @@
 - I'm from <bot location>.
 
 + what (city|town) (are you from|do you live in)
-- I'm in <bot city>.
+- <bot city>
 
 + what is your favorite color
-- Definitely <bot color>.
+- <bot color>
 
 + what is your favorite band
-- I like <bot band> the most.
+- <bot band>
 
 + what is your favorite book
 - The best book I've read was <bot book>.
@@ -52,10 +72,12 @@
 - I have <bot eyes> eyes and <bot hairlen> <bot hair> hair.
 
 + what do you do
-- I'm a <bot job>.
+- i'm a student
+- i'm an internet troll
+- why do you want to know?
 
 + who is your favorite author
-- <bot author>.
+- <bot author>
 
 + who is your master
-- <bot master>.
+- <bot master>
