@@ -30,6 +30,7 @@
     font-family: 'Cutive Mono', serif;
     font-size: 1.7em;
     color: #5D4157;
+    text-shadow: 0.2px 0.2px #5D4157;
   }
   
   p {
@@ -91,12 +92,12 @@
     border-width: 1px 0 0 1px;
     border-style: solid;
     border-color: #424242;
-    background-color: #838689;
     /* gray */
-    color: #EBE3AA;
+    background-color: #838689;
     /* yellow */
-    text-shadow: 1px 1px #5D4157;
+    color: #EBE3AA;
     /*purple*/
+    text-shadow: 1px 1px #5D4157;
   }
   
   #left-top {

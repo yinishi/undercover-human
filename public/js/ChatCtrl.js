@@ -20,18 +20,24 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
   // set person's match status: connected, waiting, or partner left
   socket.on('match status', function(matchData) {
     pair.self = matchData.self;
-    pair.partner = matchData.partner;
-    $scope.waitingForPartner = matchData.waitingForPartner;
 
-    // set the button disable variable upon match
-    $scope.hasPartner = !!pair.partner;
+    // set button disable vars
+    if (matchData.hasOwnProperty('partner')) {
+      pair.partner = matchData.partner;
+      $scope.hasPartner = !!pair.partner;
+    }
+
+    $scope.waitingForPartner = matchData.waitingForPartner;
 
     // re-enable this to see all the vars
     // console.log('self:', pair.self, ', partner:', pair.partner, ', $scope.waitingForPartner:', $scope.waitingForPartner, 'hasPartner:', $scope.hasPartner);
 
-    $scope.$apply(function() {
-      ChatFactory.postMessage(matchData.msg);
-    });
+    if (matchData.hasOwnProperty('msg')) {
+      // console.log('msg is', matchData.msg);
+      $scope.$apply(function() {
+        ChatFactory.postMessage(matchData.msg);
+      });
+    }
 
   });
 
@@ -44,7 +50,6 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
 
   // emitted from 'next' on server side
   socket.on('update score', function(fooledData) {
-    console.log('data from server is', fooledData)
       // increase your "fooled your partner" score if the partner was fooled
     if (fooledData.partnerWasFooled) {
       ScoreFactory.scores.fooledPartner++;

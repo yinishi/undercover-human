@@ -3,7 +3,8 @@ var bot = require('./bot').bot;
 
 var unmatched = [];
 var matchTimeout = Math.random() * 4000 + 2000;
-var botResponseRate = Math.random() * 200 + 1300;
+var botFirstContactRate = Math.random() * 1000 + 800;
+var botResponseRate = Math.random() * 3000 + 1800;
 
 // DATA VARS
 var gotMatchedMsg = 'you have been matched... start chatting!';
@@ -30,12 +31,6 @@ function findPartner(socket) {
 
     // there are unmatched people
   } else if (unmatched.length > 0) {
-
-    // make sure you don't get paired with yourself
-    // if (unmatched[0].id === socket.id) {
-    //   return unmatched.splice(1, 1);
-    // } else {
-
     var partner = unmatched.shift();
     partner.partner = socket;
     return partner;
@@ -97,7 +92,6 @@ module.exports = function(server) {
       console.log('person got matched:', socket.id);
       console.log('unmatched users after match', unmatched.map(person => person.id));
 
-
       // got matched with a partner
       if (socket.partner) {
 
@@ -109,7 +103,7 @@ module.exports = function(server) {
           waitingForPartner: false
         });
 
-        // emit match status to partner
+        // emit match status to partner 
         io.to(socket.partner.id).emit('match status', {
           msg: gotMatchedMsg,
           self: socket.partner.id,
@@ -122,7 +116,7 @@ module.exports = function(server) {
           if (coinFlip() % 2 === 0) {
             setTimeout(function() {
               io.to(socket.id).emit('reply', bot.reply(socket.id, "hi"));
-            }, botResponseRate);
+            }, botFirstContactRate);
 
           }
         }
@@ -184,24 +178,24 @@ module.exports = function(server) {
         var oldPartner = socket.partner;
         console.log(socket.id, 'disconnected from their partner,', oldPartner.id);
 
-        var dataToPartner = {
-          msg: partnerLeftMsg,
-          self: oldPartner.id,
-          partner: socket.id,
-          waitingForPartner: true
-        };
+        var dataToPartner = {};
 
-        // tell your old partner that you left
+        // only tell your partner you left if you are the first to leave the conversation
+        if (socket.partner.partner.id === socket.id) {
+          dataToPartner.waitingForPartner = true;
+          dataToPartner.msg = partnerLeftMsg;
+          dataToPartner.partner = socket.id;
+        }
+
+        // emit data to partner
         io.to(oldPartner.id).emit('match status', dataToPartner);
 
-        // reset partners
+        // reset your partner status
         socket.partner = null;
-        // oldPartner.partner = null;
       }
 
       // get a new partner
       socket.partner = findPartner(socket);
-
 
       console.log('person connected:', socket.id);
       console.log('unmatched users after match', unmatched.map(person => person.id));
@@ -217,7 +211,7 @@ module.exports = function(server) {
           waitingForPartner: false
         });
 
-        // emit match status to partner
+        // emit match status to partner 
         io.to(socket.partner.id).emit('match status', {
           msg: gotMatchedMsg,
           self: socket.partner.id,
@@ -230,17 +224,11 @@ module.exports = function(server) {
           if (coinFlip() % 2 === 0) {
             setTimeout(function() {
               io.to(socket.id).emit('reply', bot.reply(socket.id, "hi"));
-            }, botResponseRate);
+            }, botFirstContactRate);
           }
         }
       }
-
-
     });
-
-    // socket.on('notify formerPartner', function(guessData) {
-    //   io.to(guessData.formerPartner).emit('update score', guessData.partnerGuessedCorrectly);
-    // })
 
     //////////////////
     /// DISCONNECT ///
