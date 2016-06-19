@@ -1,5 +1,5 @@
 {
-  "name": "chatbot",
+  "name": "undercover-human",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -10,11 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bluebird": "^3.4.0",
-    "body-parser": "^1.15.1",
     "express": "^4.13.4",
     "path": "^0.12.7",
-    "prompt": "^1.0.0",
     "rivescript": "^1.12.2",
     "socket.io": "^1.4.6"
   },
