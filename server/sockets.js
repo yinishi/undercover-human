@@ -181,7 +181,7 @@ module.exports = function(server) {
         var dataToPartner = {};
 
         // only tell your partner you left if you are the first to leave the conversation
-        if (socket.partner.partner.id === socket.id) {
+        if (socket.partner.partner && socket.partner.partner.id === socket.id) {
           dataToPartner.waitingForPartner = true;
           dataToPartner.msg = partnerLeftMsg;
           dataToPartner.partner = socket.id;
