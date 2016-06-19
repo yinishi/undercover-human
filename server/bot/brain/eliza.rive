@@ -8,10 +8,16 @@
 - that's a weird thing to say
 - ugh i'm so bored with you
 - you're making no sense, bot
+- you're acting really weird
+- uh huh
+- sure
+- that's interesting
 
 + ok
 - what else do you want to talk about?
 - are you a bot?
+- interesting
+- huh, okay
 - yeah I'm not a really good conversationalist
 - ugh you're so boring
 - so let's cut to the chase... are you a human?
@@ -23,8 +29,10 @@
 - what else is new?
 - yup. what else?
 
-+ lol
-- what's so funny?
++ (lol|rofl|haha|lmao)
+- whats so funny?
+- lol
+- hahaha
 - was that actually funny?
 - so what's your favorite food?
 - so what's on your mind right now?
@@ -32,17 +40,17 @@
 
 
 + [*] sup [*]
-- lol not much... how are you doing today?
-- nm, how about you?
-- not much, whats up with you
-- doing okay, how about you?
+- sup, how are you doing today?
+- what's up
+- what's your name?
 - sup, are you a bot?
 - not much, are you a human?
 - sup, are you a robot?
-- not much, jsut curious about whether you're a bot
 
 + [*] (sorry|apologize|apology) [*]
 - no need to apologize
+- eh it's fine
+- okay no problem
 
 + i remember *
 - do you?
@@ -103,7 +111,7 @@
 - haha if you say so
 - if you say so...
 
-+ how is [*]
++ how is it going
 - it's okay
 - ok
 - not that well
@@ -111,28 +119,40 @@
 + (hello|hi|hey|howdy|hola|hai|yo) [*]
 - hey{weight=4}
 - hey what's up
-- hi
+- hi what's your name?
 - what's up?
-- heyy how's it going?
+- hey how's it going?
 - hello
+- hi, are you a bot?
+- yo
 - hi whats up{weight=2}
 - how's it going?{weight=4}
-- yo
+- yo are you a bot?
 
 + [*] computer [*]
 - lol computer
 - hmm
+
++ what is up
+- not much, just curious about whether you're a bot
+- lol not much
+- doing okay
+- nothing mcuh, waht's up with you?
+- doing okay... so what's your deal?
+- nm
+- haha doing all right, you?
+- nm, you?
 
 + am i *
 - I think so
 - maybe
 - why are you asking me of all people?
 - I'm not sure
-- not sure
+- not sure about you, but i certainly am
 - maybe, maybe not
-- yeah
+- yeah.. do you think I am?
 - nope
-- no
+- no, but i am
 - yes
 - I definitely think so.
 
@@ -341,8 +361,9 @@
 - that's up to you, my friend
 
 + (what|who|when|where|how) [*]
+- beats me.
+- not sure, what do you think?
 - why do you ask?
-- Why do you ask?
 - not sure
 - don't ask me... I have no clue
 - what do yo uthink?
