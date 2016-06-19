@@ -83,27 +83,22 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     if ($scope.correct) {
       ScoreFactory.scores.correctGuesses++;
       ScoreFactory.scores.totalScore += 1;
-    } else if (!$scope.correct) {
-      ScoreFactory.scores.fooledByPartner++;
-      ScoreFactory.scores.totalScore -= 3;
-
-    }
-
-    // generate notification
-    if ($scope.correct) {
       $scope.message = (choiceForm.choice === 'bot') ?
         'Correct! Your partner was a bot.' :
         'Correct! Your partner was a human.';
-    } else {
+    } else if (!$scope.correct) {
+      ScoreFactory.scores.fooledByPartner++;
+      ScoreFactory.scores.totalScore -= 3;
       $scope.message = (choiceForm.choice === 'bot') ?
         'Wrong! Your partner was a human.' :
         'Wrong! Your partner was a bot.';
+
     }
 
     ChatFactory.clearAllMessages();
 
     // EMIT NEXT EVENT
-    // emitting is only necessary if your partner was a human
+    // guess data is for a human partner (tells them whether or not they fooled you)
     var guessData = {};
     guessData.partnerWasFooled = !$scope.correct;
 
