@@ -1,14 +1,11 @@
-<h2>Scoreboard</h2>
+<h2>Total Score: {{scores.totalScore}}</h2>
 <div class='rubric'>
   Correct Guess: +2 points &nbsp;&#9830;&nbsp; Fool your partner into thinking you're a bot: +5 points &nbsp;&#9830;&nbsp; Incorrect Guess: -3 points 
 </div>
 <hr>
 
 <p>
-  <strong class="bigger-text">Total Score: {{scores.totalScore}}</strong>
-
-  <br>
-  <br> Correct guesses: <span class="correct">{{scores.correctGuesses}}</span>
+  Correct guesses: <span class="correct">{{scores.correctGuesses}}</span>
   <br>Fooled your partner: <span class="correct">{{scores.fooledPartner}} times</span>
   <br>
   <br> Incorrect guesses: <span class="incorrect">{{scores.fooledByPartner}} times</span>
