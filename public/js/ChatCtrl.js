@@ -32,6 +32,7 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     $scope.$apply(function() {
       ChatFactory.postMessage(matchData.msg);
     });
+
   });
 
   // posts the matchData from the person you're chatting with
@@ -76,7 +77,7 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     // calculate points
     if ($scope.correct) {
       ScoreFactory.scores.correctGuesses++;
-      ScoreFactory.scores.totalScore += 2;
+      ScoreFactory.scores.totalScore += 1;
     } else if (!$scope.correct) {
       ScoreFactory.scores.fooledByPartner++;
       ScoreFactory.scores.totalScore -= 3;
