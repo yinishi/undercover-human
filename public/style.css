@@ -35,6 +35,10 @@
   p {
     margin-bottom: 15px;
   }
+
+  .rubric {
+    font-size: 70%;
+  }
   
   .bigger-text {
     font-size: 120%;

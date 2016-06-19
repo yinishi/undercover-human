@@ -51,15 +51,19 @@
       <div id="right-bottom">
 
         <h2>Guess</h2>
+        
         <hr> My partner is a...
         <br>
         <br>
         <div>
+
           <form name="choiceForm" ng-submit="next(choiceForm)">
             <input type="radio" name="choice" value="human" ng-model="choiceForm.choice" ng-required="!choice">&nbsp;&nbsp;Human
             <br>
             <input type="radio" name="choice" value="bot" ng-model="choiceForm.choice" ng-required="!choice">&nbsp;&nbsp;Robot
             <br>
+            <br>
+
             <br>
             <button ng-disabled="!hasPartner">Submit and connect with a new partner</button>
 

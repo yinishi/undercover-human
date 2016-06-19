@@ -4,7 +4,6 @@ app.directive('scoreboard', function (ScoreFactory) {
     	templateUrl: '/templates/scores.html',
     	link: function(scope, element, attributes) {
     		scope.scores = ScoreFactory.scores;
-    		scope.totalScore = ScoreFactory.getTotalScore();
     	}
     };
 });

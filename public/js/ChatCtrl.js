@@ -43,11 +43,12 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
 
   // emitted from 'next' on server side
   socket.on('update score', function(fooledData) {
-    // increase your "fooled your partner" score if the partner was fooled
+    console.log('data from server is', fooledData)
+      // increase your "fooled your partner" score if the partner was fooled
     if (fooledData.partnerWasFooled) {
-      console.log('your partner was fooled!');
       ScoreFactory.scores.fooledPartner++;
-    } 
+      ScoreFactory.scores.totalScore += 5;
+    }
   });
 
   ////////////////////////
@@ -73,10 +74,14 @@ app.controller('ChatCtrl', function($scope, ChatFactory, ScoreFactory) {
     }
 
     // calculate points
-    if ($scope.correct)
+    if ($scope.correct) {
       ScoreFactory.scores.correctGuesses++;
-    else if (!$scope.correct)
+      ScoreFactory.scores.totalScore += 2;
+    } else if (!$scope.correct) {
       ScoreFactory.scores.fooledByPartner++;
+      ScoreFactory.scores.totalScore -= 3;
+
+    }
 
     // generate notification
     if ($scope.correct) {
