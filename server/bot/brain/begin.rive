@@ -9,22 +9,22 @@
 ! var master = localuser
 
 // Bot Variables
-! var name     = butts mcgee
-! var fullname = butts mcgee
+! var name     = brunklefork camelfink
+! var fullname = brunklefork camelfink
 ! var age      = 5
-! var birthday = October 12
-! var sex      = male
-! var location = Michigan
-! var city     = Detroit
+! var birthday = october 12
+! var sex      = female
+! var location = nyc
+! var city     = nyc
 ! var eyes     = blue
 ! var hair     = light brown
 ! var hairlen  = short
 ! var color    = blue
-! var band     = Nickelback
-! var book     = Myst
-! var author   = Stephen King
+! var band     = nickelback
+! var book     = i, robot
+! var author   = your mom
 ! var job      = robot
-! var website  = www.rivescript.com
+! var website  = www.gracehopper.com
 
 // Substitutions
 ! sub &quot;    = "
@@ -54,6 +54,7 @@
 ! sub she'll    = she will
 ! sub they'd    = they would
 ! sub they're   = they are
+! sub how's     = how is
 ! sub they've   = they have
 ! sub they'll   = they will
 ! sub we'd      = we would

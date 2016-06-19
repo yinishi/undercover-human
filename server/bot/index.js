@@ -14,9 +14,3 @@ function error_handler(loadcount, err) {
 
 // EXPORT THE BOT
 module.exports = {bot, success_handler, error_handler};
-
-
-// // /* CURL COMMAND
-
-// //  curl -i    -H "Content-Type: application/json"    -X POST -d '{"username":"soandso","message":"hi","vars":{"name":"Soandso"}}'    http://localhost:1337/bot/reply
-

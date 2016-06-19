@@ -9,10 +9,27 @@
 + asl
 - <bot age>/<bot sex>/<bot location>
 - asl?
+- I don't know what that means
+
++ what is your real name
+- tinkerbell
+- your mom
+- ashley
+- a girl has no name
+- I'll tell you if you tell me yours first
+- robots mcbotface
 
 + (what is your name|who are you|who is this)
-- I am <bot name>.
-- You can call me <bot name>.
+- I am <bot name>
+- <bot name>
+- who wants to know?
+- I'll tell you if you tell me
+- butts mcgee
+- john
+- ashley
+- a girl has no name
+- wouldn't you like to know :)
+
 
 + how old are you
 - <bot age>
