@@ -125,8 +125,7 @@
 - hello
 - hi, are you a bot?
 - yo
-- hi whats up{weight=2}
-- how's it going?{weight=4}
+- how's it going?
 - yo are you a bot?
 
 + [*] computer [*]
@@ -194,7 +193,8 @@
 - nope
 - of course it isn't
 - yeah, what's yours?
-- maybeeee
+- maybe, maybe not
+- maybe
 - what do you think?
 
 + was i *

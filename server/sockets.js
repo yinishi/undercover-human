@@ -38,14 +38,12 @@ function findPartner(socket) {
     // there are no unmatched people, get added to the queue and wait. THIS IS THE ONLY PLACE IN THE ENTIRE PROGRAM WHERE SOMEONE EVER SHOULD GET PUSHED TO THE QUEUE.
   } else if (unmatched.length < 1) {
     unmatched.push(socket);
-    console.log(socket.id);
-    console.log('waiting for a partner');
   }
 }
 
 // this function should be only used on people who are CURRENTLY waiting in the queue
 function removeSelfFromQueue(id) {
-  console.log('queue length is', unmatched.length);
+  // console.log('queue length is', unmatched.length);
   // 1. find the index
   unmatched.forEach(function(person, i) {
     if (person.id === id) index = i;
@@ -54,8 +52,10 @@ function removeSelfFromQueue(id) {
   // 2. delete them from queue
   if (typeof index === 'number') {
     unmatched.splice(index, 1);
-    console.log('removed from queue', unmatched.length);
-  } else console.log('not in queue, not removed', unmatched.length);
+    // console.log('removed from queue', unmatched.length);
+  } 
+  // else 
+    // console.log('not in queue, not removed', unmatched.length);
 }
 
 //////////////////////////
@@ -70,7 +70,7 @@ module.exports = function(server) {
   /////////////////////
 
   io.on('connection', function(socket) {
-    console.log('-----------------');
+    // console.log('-----------------');
     console.log(socket.id, 'connected');
     // console.log('unmatched users after joining', unmatched.map(person => person.id));
 
@@ -89,8 +89,8 @@ module.exports = function(server) {
       // upon connection, either get matched with a partner or get added to the unmatched queue
       socket.partner = findPartner(socket);
 
-      console.log('person got matched:', socket.id);
-      console.log('unmatched users after match', unmatched.map(person => person.id));
+      // console.log('person got matched:', socket.id);
+      // console.log('unmatched users after match', unmatched.map(person => person.id));
 
       // got matched with a partner
       if (socket.partner) {
@@ -134,7 +134,6 @@ module.exports = function(server) {
 
       // if your partner is a bot...
       if (socket.partner.id === 'bot') {
-        console.log(socket.id, 'is chatting with bot');
 
         // set a delay so the bot does not respond immediately
         setTimeout(function() {
@@ -154,7 +153,7 @@ module.exports = function(server) {
     ///////////////////
 
     socket.on('next', function(guessData) {
-      console.log('--------------------');
+      // console.log('--------------------');
 
       // emit waiting message to self
       io.to(socket.id).emit('match status', {
@@ -176,7 +175,7 @@ module.exports = function(server) {
 
         // EMIT MATCH INFORMATION
         var oldPartner = socket.partner;
-        console.log(socket.id, 'disconnected from their partner,', oldPartner.id);
+        console.log(socket.id, 'disconnected from their partner');
 
         var dataToPartner = {};
 
@@ -197,8 +196,8 @@ module.exports = function(server) {
       // get a new partner
       socket.partner = findPartner(socket);
 
-      console.log('person connected:', socket.id);
-      console.log('unmatched users after match', unmatched.map(person => person.id));
+      // console.log('person connected:', socket.id);
+      // console.log('unmatched users after match', unmatched.map(person => person.id));
 
       // partner exists
       if (socket.partner) {
@@ -238,6 +237,7 @@ module.exports = function(server) {
       var index;
       console.log('-----------------------');
       console.log(socket.id, 'disconnected from the server');
+      console.log('-----------------------');
 
       // if someone from the queue disconnects, remove them from the queue
       removeSelfFromQueue(socket.id);
@@ -255,7 +255,7 @@ module.exports = function(server) {
         });
 
         // remove partner objects from both sockets
-        console.log('abandoned partner is', oldPartner.id);
+        // console.log('abandoned partner is', oldPartner.id);
         oldPartner.partner = null;
         socket.partner = null;
       }

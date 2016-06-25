@@ -1,16 +1,16 @@
 // Learn stuff about our users.
 
 + my name is *
-- <set name=<star>>Nice to meet you, <get name>.
+- <set name=<star>>nice to meet you, <get name>.
 - <set name=<star>><get name>, nice to meet you.
-
-+ my name is <bot master>
-- <set name=<bot master>>that's cool
+- <set name=<star>>that's cool
+- <set name=<star>>hey me too
+- <set name=<star>>ok tha'ts what i'll call you from now on
 
 + my name is <bot name>
 - <set name=<bot name>>hey, that's my name, too!
 - <set name=<bot name>>me too!
-- nice to meet you
+- nice to meet you, my name is also <bot name>
 - that's a cool name
 - nice
 - awesome
