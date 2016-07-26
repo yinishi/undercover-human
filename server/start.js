@@ -9,6 +9,8 @@ var path = require('path');
 
 server.on('request', app);
 
+var PORT = process.env.PORT || 1337
+
 /* INITIALIZE SOCKETS */
 require('./sockets.js')(server);
 
@@ -19,13 +21,9 @@ var bot = Bot.bot;
 bot.loadDirectory(__dirname + '/bot/brain', Bot.success_handler, Bot.error_handler);
 
 /* START SERVER */
-server.listen(1337, function() {
-  console.log('The server is listening on port 1337!');
+server.listen(PORT, function() {
+  console.log('The server is listening on port ' + PORT);
 });
-
-/* MIDDLEWARE */
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/bot', router);
